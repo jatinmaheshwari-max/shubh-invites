@@ -8,45 +8,98 @@
    MOBILE MENU
 ===================================================== */
 
-const menuToggle = document.querySelector(".menu-toggle");
-const mobileNav = document.querySelector(".mobile-nav");
-const mobileLinks = document.querySelectorAll(".mobile-nav a");
+const menuToggle =
+    document.querySelector(".menu-toggle");
+
+const mobileNav =
+    document.querySelector(".mobile-nav");
+
+const mobileLinks =
+    document.querySelectorAll(".mobile-nav a");
 
 
 if (menuToggle && mobileNav) {
 
-    menuToggle.addEventListener("click", () => {
+    const closeMobileMenu = () => {
 
-        const isOpen =
-            mobileNav.classList.toggle("active");
+        mobileNav.classList.remove("active");
 
         menuToggle.setAttribute(
             "aria-expanded",
-            isOpen
+            "false"
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            "Open navigation menu"
+        );
+
+    };
+
+
+    const openMobileMenu = () => {
+
+        mobileNav.classList.add("active");
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            "Close navigation menu"
+        );
+
+    };
+
+
+    menuToggle.addEventListener(
+        "click",
+        () => {
+
+            const isOpen =
+                mobileNav.classList.contains("active");
+
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+
+        }
+    );
+
+
+    mobileLinks.forEach((link) => {
+
+        link.addEventListener(
+            "click",
+            closeMobileMenu
         );
 
     });
 
 
-    /*
-     * Close mobile menu after
-     * clicking a navigation link.
-     */
+    /* Close with Escape */
 
-    mobileLinks.forEach((link) => {
+    document.addEventListener(
+        "keydown",
+        (event) => {
 
-        link.addEventListener("click", () => {
+            if (
+                event.key === "Escape" &&
+                mobileNav.classList.contains("active")
+            ) {
 
-            mobileNav.classList.remove("active");
+                closeMobileMenu();
 
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+                menuToggle.focus();
 
-        });
+            }
 
-    });
+        }
+    );
 
 }
 
@@ -239,3 +292,212 @@ styleTabs.forEach((tab) => {
 
 });
 
+/* =====================================================
+   TRUST STATISTICS COUNTER
+===================================================== */
+
+const counters = document.querySelectorAll(".counter");
+
+
+const animateCounter = (counter) => {
+
+    const target = Number(
+        counter.dataset.target
+    );
+
+    const duration = 1600;
+
+    const startTime = performance.now();
+
+
+    const updateCounter = (currentTime) => {
+
+        const elapsed =
+            currentTime - startTime;
+
+        const progress =
+            Math.min(
+                elapsed / duration,
+                1
+            );
+
+
+        /*
+         * Ease-out animation
+         * Starts quickly and slows down
+         * near the final number.
+         */
+
+        const easedProgress =
+            1 - Math.pow(
+                1 - progress,
+                3
+            );
+
+
+        const currentValue =
+            Math.floor(
+                easedProgress * target
+            );
+
+
+        counter.textContent =
+            currentValue.toLocaleString();
+
+
+        if (progress < 1) {
+
+            requestAnimationFrame(
+                updateCounter
+            );
+
+        } else {
+
+            counter.textContent =
+                target.toLocaleString();
+
+        }
+
+    };
+
+
+    requestAnimationFrame(
+        updateCounter
+    );
+
+};
+
+
+/* -----------------------------------------------------
+   Start counters only when visible
+----------------------------------------------------- */
+
+if (
+    counters.length &&
+    "IntersectionObserver" in window
+) {
+
+    const counterObserver =
+        new IntersectionObserver(
+            (entries, observer) => {
+
+                entries.forEach((entry) => {
+
+                    if (
+                        !entry.isIntersecting
+                    ) {
+                        return;
+                    }
+
+
+                    const counter =
+                        entry.target;
+
+
+                    if (
+                        counter.dataset.started
+                    ) {
+                        return;
+                    }
+
+
+                    counter.dataset.started =
+                        "true";
+
+
+                    animateCounter(
+                        counter
+                    );
+
+
+                    observer.unobserve(
+                        counter
+                    );
+
+                });
+
+            },
+            {
+                threshold: 0.4
+            }
+        );
+
+
+    counters.forEach((counter) => {
+
+        counterObserver.observe(
+            counter
+        );
+
+    });
+
+}
+
+/* =====================================================
+   MULTILINGUAL CUSTOMER TESTIMONIALS
+===================================================== */
+
+const languageTabs =
+    document.querySelectorAll(".language-tab");
+
+const testimonialGroups =
+    document.querySelectorAll(".testimonial-group");
+
+
+if (
+    languageTabs.length &&
+    testimonialGroups.length
+) {
+
+    languageTabs.forEach((tab) => {
+
+        tab.addEventListener("click", () => {
+
+            const selectedLanguage =
+                tab.dataset.language;
+
+
+            /* -----------------------------------------
+               UPDATE LANGUAGE TABS
+            ----------------------------------------- */
+
+            languageTabs.forEach((item) => {
+
+                const isActive =
+                    item === tab;
+
+                item.classList.toggle(
+                    "active",
+                    isActive
+                );
+
+                item.setAttribute(
+                    "aria-selected",
+                    String(isActive)
+                );
+
+            });
+
+
+            /* -----------------------------------------
+               UPDATE TESTIMONIAL GROUP
+            ----------------------------------------- */
+
+            testimonialGroups.forEach((group) => {
+
+                const isSelected =
+                    group.dataset.language ===
+                    selectedLanguage;
+
+                group.classList.toggle(
+                    "active",
+                    isSelected
+                );
+
+            });
+
+        });
+
+    });
+
+}
