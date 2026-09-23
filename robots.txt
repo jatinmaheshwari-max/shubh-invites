@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://invites.libesole.com/sitemap.xml

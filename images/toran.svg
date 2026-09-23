@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 160 110" width="160" height="110">
+    <defs>
+        <radialGradient id="orange" cx="40%" cy="35%" r="70%">
+            <stop offset="0" stop-color="#ffd166"/>
+            <stop offset="0.55" stop-color="#ff9f1c"/>
+            <stop offset="1" stop-color="#e8590c"/>
+        </radialGradient>
+        <radialGradient id="yellow" cx="40%" cy="35%" r="70%">
+            <stop offset="0" stop-color="#fff3b0"/>
+            <stop offset="0.55" stop-color="#ffd23f"/>
+            <stop offset="1" stop-color="#f59f00"/>
+        </radialGradient>
+
+        <g id="m1">
+            <circle r="7" fill="url(#orange)"/>
+            <circle r="6.5" fill="none" stroke="#d9480f" stroke-width="2" stroke-dasharray="1.6 1.4"/>
+            <circle r="4" fill="none" stroke="#ffa94d" stroke-width="1.6" stroke-dasharray="1.2 1"/>
+            <circle r="1.6" fill="#a63e00"/>
+        </g>
+        <g id="m2">
+            <circle r="7" fill="url(#yellow)"/>
+            <circle r="6.5" fill="none" stroke="#f08c00" stroke-width="2" stroke-dasharray="1.6 1.4"/>
+            <circle r="4" fill="none" stroke="#ffe066" stroke-width="1.6" stroke-dasharray="1.2 1"/>
+            <circle r="1.6" fill="#b35c00"/>
+        </g>
+        <g id="leaf">
+            <path d="M0 0 C6 6 6 16 0 24 C-6 16 -6 6 0 0Z" fill="#2f9e44"/>
+            <path d="M0 2 L0 22" stroke="#1b5e20" stroke-width="0.8"/>
+        </g>
+    </defs>
+
+    <!-- Swag rope -->
+    <path d="M0 8 Q80 40 160 8" fill="none" stroke="#b86a12" stroke-width="1.4"/>
+
+    <!-- Leaves at the ends -->
+    <use xlink:href="#leaf" href="#leaf" transform="translate(4 8) rotate(-25)"/>
+    <use xlink:href="#leaf" href="#leaf" transform="translate(156 8) rotate(25)"/>
+
+    <!-- Marigolds along the swag -->
+    <use xlink:href="#m1" href="#m1" x="0" y="8"/>
+    <use xlink:href="#m2" href="#m2" x="16" y="13.8"/>
+    <use xlink:href="#m1" href="#m1" x="32" y="18.2"/>
+    <use xlink:href="#m2" href="#m2" x="48" y="21.4"/>
+    <use xlink:href="#m1" href="#m1" x="64" y="23.4"/>
+    <use xlink:href="#m1" href="#m1" x="96" y="23.4"/>
+    <use xlink:href="#m2" href="#m2" x="112" y="21.4"/>
+    <use xlink:href="#m1" href="#m1" x="128" y="18.2"/>
+    <use xlink:href="#m2" href="#m2" x="144" y="13.8"/>
+    <use xlink:href="#m1" href="#m1" x="160" y="8"/>
+
+    <!-- Hanging strand (sways) -->
+    <g>
+        <animateTransform attributeName="transform" type="rotate" values="-5 80 24; 5 80 24; -5 80 24" dur="4s" repeatCount="indefinite"/>
+        <path d="M80 24 L80 86" stroke="#b86a12" stroke-width="1.2"/>
+        <use xlink:href="#m2" href="#m2" x="80" y="40"/>
+        <use xlink:href="#m1" href="#m1" x="80" y="55"/>
+        <use xlink:href="#m2" href="#m2" x="80" y="70"/>
+        <use xlink:href="#leaf" href="#leaf" x="80" y="78"/>
+    </g>
+
+    <!-- Centre flower on top of the strand -->
+    <use xlink:href="#m1" href="#m1" x="80" y="24"/>
+</svg>
