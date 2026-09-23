@@ -2931,6 +2931,26 @@ section {
     color: var(--pink);
 }
 
+.form-privacy {
+    margin-top: 12px;
+
+    color: var(--text-light);
+
+    font-size: 0.74rem;
+    text-align: center;
+}
+
+/* Spam trap: kept off-screen instead of display:none so bots still see it */
+.form-trap {
+    position: absolute;
+    left: -9999px;
+
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+}
+
 
 /* =====================================================
    FOOTER

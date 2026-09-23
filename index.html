@@ -1134,9 +1134,21 @@
 
                 <h3>Quick Enquiry</h3>
 
-                <div class="form-row">
-                    <label for="enq-name">Your name</label>
-                    <input id="enq-name" name="name" type="text" autocomplete="name" required>
+                <div class="form-row form-row-half">
+                    <div>
+                        <label for="enq-name">Your name</label>
+                        <input id="enq-name" name="name" type="text" autocomplete="name" required>
+                    </div>
+                    <div>
+                        <label for="enq-phone">WhatsApp number</label>
+                        <input id="enq-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="98765 43210" required>
+                    </div>
+                </div>
+
+                <!-- Spam trap: hidden from people, bots fill it in -->
+                <div class="form-trap" aria-hidden="true">
+                    <label for="enq-website">Website</label>
+                    <input id="enq-website" name="website" type="text" tabindex="-1" autocomplete="off">
                 </div>
 
                 <div class="form-row form-row-half">
@@ -1174,7 +1186,7 @@
                     <textarea id="enq-message" name="message" rows="3" placeholder="Style, language, number of events…"></textarea>
                 </div>
 
-                <p class="form-error" role="alert" hidden>Please enter your name.</p>
+                <p class="form-error" role="alert" hidden>Please enter your name and WhatsApp number.</p>
 
                 <button type="submit" class="button button-whatsapp">
                     Send on WhatsApp
@@ -1183,6 +1195,11 @@
                 <a href="mailto:jatinmaheshwari20@gmail.com" class="form-alt-link" id="enquiry-email">
                     Prefer email? Send this enquiry by email
                 </a>
+
+                <p class="form-privacy">
+                    🔒 Your details are shared only with Libesole and used
+                    only to reply to your enquiry.
+                </p>
 
             </form>
 

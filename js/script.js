@@ -6,6 +6,13 @@
 const WHATSAPP_NUMBER = "916398252681";
 const CONTACT_EMAIL = "jatinmaheshwari20@gmail.com";
 
+/*
+ * Google Apps Script web app that saves leads to your private Google Sheet
+ * and emails you. Paste the "/exec" URL from the deployment here.
+ * Setup steps: setup/lead-sheet.gs
+ */
+const LEAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzyr5qVCMiwmEIeKZd6wBn2KnTGTBijeSlHNTkAxSXDZrMfxnOsXCNMa6Uiu28OJtm1/exec";
+
 const prefersReducedMotion =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -267,6 +274,54 @@ videos.forEach((video) => {
 
 
 /* =====================================================
+   LEAD LOGGING → GOOGLE SHEET
+===================================================== */
+
+/*
+ * Fire-and-forget: sendBeacon keeps working even while the page is
+ * opening WhatsApp or the mail app, and never blocks the visitor.
+ */
+const sendLead = (fields) => {
+
+    if (!LEAD_ENDPOINT) {
+        return;
+    }
+
+    const body = new URLSearchParams({
+        ...fields,
+        page: window.location.href
+    });
+
+    try {
+        if (navigator.sendBeacon && navigator.sendBeacon(LEAD_ENDPOINT, body)) {
+            return;
+        }
+    } catch (error) {
+        /* Fall through to fetch */
+    }
+
+    fetch(LEAD_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        body
+    }).catch(() => {});
+
+};
+
+
+/* Log clicks on the floating WhatsApp / Call buttons */
+
+document.querySelectorAll(".contact-float-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+        sendLead({
+            type: "click",
+            button: button.classList.contains("call-btn") ? "Call" : "WhatsApp"
+        });
+    });
+});
+
+
+/* =====================================================
    ENQUIRY FORM → WHATSAPP / EMAIL
 ===================================================== */
 
@@ -275,6 +330,8 @@ const enquiryForm = document.getElementById("enquiry-form");
 if (enquiryForm) {
 
     const nameInput = enquiryForm.querySelector("#enq-name");
+    const phoneInput = enquiryForm.querySelector("#enq-phone");
+    const trapInput = enquiryForm.querySelector("#enq-website");
     const occasionSelect = enquiryForm.querySelector("#enq-occasion");
     const dateInput = enquiryForm.querySelector("#enq-date");
     const messageInput = enquiryForm.querySelector("#enq-message");
@@ -290,16 +347,19 @@ if (enquiryForm) {
         return `${day}/${month}/${year}`;
     };
 
+    const selectedServices = () => [...serviceInputs]
+        .filter((input) => input.checked)
+        .map((input) => input.value);
+
     const buildMessage = () => {
 
-        const services = [...serviceInputs]
-            .filter((input) => input.checked)
-            .map((input) => input.value);
+        const services = selectedServices();
 
         const lines = [
             "Hi Libesole! I'd like to enquire about an invitation.",
             "",
             `Name: ${nameInput.value.trim()}`,
+            `WhatsApp: ${phoneInput.value.trim()}`,
             `Occasion: ${occasionSelect.value}`
         ];
 
@@ -319,22 +379,57 @@ if (enquiryForm) {
 
     };
 
+    /* At least 10 digits, allowing spaces, dashes and a leading + */
+    const isValidPhone = (value) => value.replace(/\D/g, "").length >= 10;
+
     const validate = () => {
-        const isValid = nameInput.value.trim().length > 0;
-        nameInput.setAttribute("aria-invalid", String(!isValid));
-        errorMessage.hidden = isValid;
-        if (!isValid) {
+
+        const nameValid = nameInput.value.trim().length > 0;
+        const phoneValid = isValidPhone(phoneInput.value);
+
+        nameInput.setAttribute("aria-invalid", String(!nameValid));
+        phoneInput.setAttribute("aria-invalid", String(!phoneValid));
+
+        errorMessage.hidden = nameValid && phoneValid;
+
+        if (!nameValid) {
             nameInput.focus();
+        } else if (!phoneValid) {
+            phoneInput.focus();
         }
-        return isValid;
+
+        return nameValid && phoneValid;
+
     };
 
-    nameInput.addEventListener("input", () => {
-        if (nameInput.value.trim()) {
-            nameInput.removeAttribute("aria-invalid");
-            errorMessage.hidden = true;
-        }
+    [nameInput, phoneInput].forEach((input) => {
+        input.addEventListener("input", () => {
+            input.removeAttribute("aria-invalid");
+            if (nameInput.value.trim() && isValidPhone(phoneInput.value)) {
+                errorMessage.hidden = true;
+            }
+        });
     });
+
+    const logEnquiry = (channel) => {
+
+        /* Bots fill the hidden field; people never see it */
+        if (trapInput && trapInput.value) {
+            return;
+        }
+
+        sendLead({
+            type: "enquiry",
+            channel,
+            name: nameInput.value.trim(),
+            phone: phoneInput.value.trim(),
+            occasion: occasionSelect.value,
+            eventDate: formatDate(dateInput.value),
+            services: selectedServices().join(", "),
+            message: messageInput.value.trim()
+        });
+
+    };
 
     enquiryForm.addEventListener("submit", (event) => {
 
@@ -343,6 +438,8 @@ if (enquiryForm) {
         if (!validate()) {
             return;
         }
+
+        logEnquiry("WhatsApp");
 
         const url =
             `https://wa.me/${WHATSAPP_NUMBER}?text=` +
@@ -359,6 +456,8 @@ if (enquiryForm) {
                 event.preventDefault();
                 return;
             }
+
+            logEnquiry("Email");
 
             const subject = `Invitation enquiry: ${occasionSelect.value}`;
 
