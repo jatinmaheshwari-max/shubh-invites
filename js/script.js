@@ -3,7 +3,7 @@
    MAIN JAVASCRIPT
 ===================================================== */
 
-const WHATSAPP_NUMBER = "916398252681";
+const WHATSAPP_NUMBER = "916396516703";
 const CONTACT_EMAIL = "jatinmaheshwari20@gmail.com";
 
 /*
