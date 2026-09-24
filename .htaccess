@@ -1,27 +1,28 @@
-# Send every visitor to the secure https:// version
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# BEGIN MilesWeb-ErrorPages
+ErrorDocument 503 /error_pages/503.html
+# END MilesWeb-ErrorPages
 
-# Protect videos: they play on the website, but opening a video's
-# address directly in a browser tab (where it can be saved) or embedding
-# it on another website is blocked.
+# BEGIN Libesole
+RewriteEngine On
+
+# Videos play on the website, but opening a video's address directly
+# in a browser tab (where it can be saved) is blocked
 RewriteCond %{REQUEST_URI} \.mp4$ [NC]
 RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [NC]
 RewriteRule ^ - [F]
 
+# Other websites can't embed or hotlink the videos
 RewriteCond %{REQUEST_URI} \.mp4$ [NC]
 RewriteCond %{HTTP_REFERER} !^$
 RewriteCond %{HTTP_REFERER} !^https?://([a-z0-9-]+\.)*libesole\.com/ [NC]
 RewriteRule ^ - [F]
 
-# Keep the setup notes private
-<Files "lead-sheet.gs">
+# Keep private files hidden
+<FilesMatch "\.(gs|bat|md)$">
     Require all denied
-</Files>
+</FilesMatch>
 
-# Let browsers cache images, videos and styles for faster repeat visits
+# Faster repeat visits: browsers cache images, videos and styles
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType image/jpeg "access plus 30 days"
@@ -30,3 +31,4 @@ RewriteRule ^ - [F]
     ExpiresByType text/css "access plus 7 days"
     ExpiresByType text/javascript "access plus 7 days"
 </IfModule>
+# END Libesole
