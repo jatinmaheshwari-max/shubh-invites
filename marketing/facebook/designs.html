@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Libesole Facebook Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/style.css">
+<style>
+    /* Render one design at a time: designs.html#cover, #profile, #post-01 … */
+    html, body { margin: 0; padding: 0 !important; overflow: hidden; background: #fff8ef; min-width: 0; }
+    .canvas { display: none; position: relative; overflow: hidden; box-sizing: border-box; font-family: var(--sans); color: var(--plum); }
+    .canvas.show { display: block; }
+    .canvas * { animation: none !important; }
+
+    .sq  { width: 1080px; height: 1080px; }
+    .pt  { width: 1080px; height: 1350px; }
+    .cv  { width: 1640px; height: 624px; }
+
+    .bg-cream {
+        background:
+            radial-gradient(circle at 88% 12%, rgba(224, 51, 122, 0.2), transparent 38%),
+            radial-gradient(circle at 10% 90%, rgba(247, 169, 40, 0.25), transparent 40%),
+            radial-gradient(circle at 0% 40%, rgba(14, 138, 138, 0.12), transparent 30%),
+            #fff8ef;
+    }
+
+    .toran-top { position: absolute; top: 0; left: 0; right: 0; height: 120px; z-index: 5;
+        background: url("../../images/toran.svg") repeat-x top center / 175px 120px; }
+
+    .mandala { position: absolute; opacity: 0.5; }
+
+    .eyebrow-lg { color: var(--pink); font-size: 26px; font-weight: 700; letter-spacing: 0.2em; }
+    .eyebrow-lg::before { content: "✿ "; color: var(--marigold); }
+
+    .grad-text {
+        background: var(--grad-festive); -webkit-background-clip: text; background-clip: text;
+        color: transparent; font-style: italic;
+    }
+    .gold-text {
+        background: linear-gradient(90deg, #f3d38b, #ffb36b, #ff9ec4); -webkit-background-clip: text;
+        background-clip: text; color: transparent; font-style: italic;
+    }
+
+    .serif { font-family: var(--serif); font-weight: 500; }
+
+    /* Footer strip used on every post */
+    .foot {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 130px; z-index: 6;
+        display: flex; align-items: center; justify-content: space-between; padding: 0 60px;
+        background: var(--grad-festive); color: #fff;
+    }
+    .foot .brand { display: flex; align-items: center; gap: 16px; }
+    .foot .mark {
+        width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center;
+        background: #fff; color: var(--pink); font-family: var(--serif); font-size: 46px; font-weight: 700;
+    }
+    .foot .name { font-family: var(--serif); font-size: 46px; font-weight: 700; line-height: 1; }
+    .foot .name small { display: block; font-family: var(--sans); font-size: 14px; letter-spacing: 0.35em; font-weight: 700; opacity: 0.9; margin-top: 4px; }
+    .foot .contact { text-align: right; font-size: 26px; font-weight: 700; line-height: 1.35; }
+    .foot .contact span { display: block; font-size: 22px; font-weight: 500; opacity: 0.92; }
+
+    /* Phone mockup */
+    .phone-m {
+        position: absolute; z-index: 3; padding: 12px; border-radius: 52px;
+        background: linear-gradient(145deg, #3b1248, #171514);
+        box-shadow: 0 0 0 3px rgba(247, 169, 40, 0.6), 0 40px 90px rgba(90, 20, 60, 0.35);
+    }
+    .phone-m .scr { width: 100%; height: 100%; overflow: hidden; border-radius: 42px; }
+    .phone-m img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.28); }
+    .photo-m {
+        position: absolute; z-index: 2; overflow: hidden; border: 10px solid #fff; border-radius: 24px;
+        box-shadow: 0 30px 60px rgba(90, 20, 60, 0.25);
+    }
+    .photo-m img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+
+    .chip { display: inline-block; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 26px; margin: 0 10px 12px 0; }
+    .c-pink { background: #ffe1ec; color: #b81d5f; }
+    .c-gold { background: #fff0c9; color: #9a5b00; }
+    .c-teal { background: #d8f3ef; color: #0a5c63; }
+
+    .petal-s { position: absolute; width: 22px; height: 15px; border-radius: 150% 0 150% 0; opacity: 0.85; }
+
+    /* ---------- PROFILE ---------- */
+    #profile { background: var(--grad-festive); display: none; }
+    #profile.show { display: grid; place-items: center; }
+    #profile .ring {
+        position: relative; z-index: 2; width: 760px; height: 760px; border-radius: 50%;
+        border: 8px solid rgba(255, 255, 255, 0.9); background: rgba(255, 255, 255, 0.1);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff;
+        box-shadow: inset 0 0 0 22px rgba(255, 255, 255, 0.12);
+    }
+    #profile .L { font-family: var(--serif); font-size: 440px; font-weight: 600; line-height: 0.85; }
+    #profile .nm { font-size: 58px; font-weight: 700; letter-spacing: 0.32em; margin-top: 10px; padding-left: 0.32em; }
+
+    /* ---------- COVER ---------- */
+    #cover .txt { position: absolute; left: 230px; top: 150px; z-index: 4; width: 760px; }
+    #cover h1 { font-family: var(--serif); font-weight: 500; font-size: 96px; line-height: 0.92; margin: 14px 0 26px; color: var(--plum); }
+    #cover h1 span { display: block; }
+    #cover .line { margin-top: 12px; font-size: 26px; font-weight: 700; color: var(--plum); }
+    #cover .line b { color: var(--pink); }
+
+    /* ---------- POST HEADINGS ---------- */
+    .ph { position: absolute; left: 70px; right: 70px; top: 170px; z-index: 4; text-align: center; }
+    .ph h2 { font-family: var(--serif); font-weight: 500; font-size: 108px; line-height: 0.95; margin: 18px 0 0; }
+    .ph h2 span { display: block; }
+    .ph p { margin-top: 26px; font-size: 32px; line-height: 1.45; color: var(--text-light); }
+
+    /* Services / steps cards */
+    .stack { position: absolute; left: 80px; right: 80px; z-index: 4; display: grid; gap: 26px; }
+    .card-g {
+        display: grid; grid-template-columns: 120px 1fr; gap: 30px; align-items: center;
+        padding: 34px 38px; border-radius: 34px; background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.22); color: #fff;
+    }
+    .card-g .ic { width: 120px; height: 120px; border-radius: 30px; display: grid; place-items: center; font-size: 60px; }
+    .card-g h3 { font-family: var(--serif); font-size: 56px; font-weight: 600; line-height: 1; margin: 0; }
+    .card-g p { margin: 10px 0 0; font-size: 28px; opacity: 0.85; line-height: 1.35; }
+    .card-w { background: #fff; color: var(--plum); border: 0; box-shadow: 0 20px 50px rgba(90, 20, 60, 0.12); }
+    .card-w p { color: var(--text-light); opacity: 1; }
+    .num { color: #fff; font-family: var(--serif); font-size: 64px; font-weight: 700; border-radius: 50% !important; }
+
+    /* Templates grid */
+    .tgrid { position: absolute; left: 70px; right: 70px; top: 470px; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .tgrid .tpl { border-radius: 28px; aspect-ratio: auto; height: 330px; box-shadow: 0 20px 40px rgba(90, 20, 60, 0.18); }
+    .canvas .tpl-top { font-size: 30px; }
+    .canvas .tpl-small { font-size: 14px; }
+    .canvas .tpl-names { font-size: 60px; }
+    .canvas .tpl-date { font-size: 22px; }
+    .canvas .tpl-frame { padding: 22px 12px 16px; }
+
+    /* Languages */
+    .lgrid { position: absolute; left: 70px; right: 70px; top: 520px; z-index: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .lcard { padding: 28px 30px; border-radius: 28px; background: #fff; box-shadow: 0 16px 40px rgba(90, 20, 60, 0.1); }
+    .lcard b { display: block; font-size: 40px; font-weight: 600; line-height: 1.25; color: var(--plum); font-family: "Nirmala UI", var(--serif); }
+    .lcard span { display: block; margin-top: 8px; font-size: 22px; font-weight: 700; letter-spacing: 0.12em; }
+
+    /* Website post */
+    .browser { position: absolute; left: 110px; right: 110px; top: 470px; z-index: 4; border-radius: 26px; overflow: hidden; background: #fff; box-shadow: 0 40px 90px rgba(0,0,0,0.45); }
+    .browser .bar { height: 60px; display: flex; align-items: center; gap: 16px; padding: 0 22px; background: #f2eef3; }
+    .browser .bar i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .browser .bar .url { flex: 1; padding: 8px 16px; border-radius: 8px; background: #e6e0e8; color: #666; font-size: 22px; }
+    .browser .view {
+        height: 560px; display: flex; align-items: center; justify-content: center; color: #fff; text-align: center;
+        background: linear-gradient(160deg, rgba(106,44,145,.55), rgba(224,51,122,.45) 60%, rgba(255,107,44,.45)), url("../../images/i5.jpeg") center 30% / cover;
+    }
+    .browser .arch { width: 60%; padding: 40px 20px; border: 2px solid rgba(255,255,255,.75); border-radius: 300px 300px 20px 20px; background: rgba(42,16,48,.25); }
+    .browser .arch small { font-size: 18px; font-weight: 700; letter-spacing: 0.2em; }
+    .browser .arch h3 { font-family: var(--script); font-weight: 400; font-size: 96px; line-height: 0.95; margin: 14px 0; }
+    .cd { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+    .cd div { padding: 10px 0; border: 1px solid rgba(255,255,255,.4); border-radius: 14px; background: rgba(255,255,255,.14); }
+    .cd b { display: block; font-family: var(--serif); font-size: 40px; line-height: 1; }
+    .cd span { font-size: 13px; letter-spacing: 0.12em; }
+    .ticks { position: absolute; left: 110px; right: 110px; top: 1130px; z-index: 4; display: flex; justify-content: space-between; color: #fff; font-size: 26px; font-weight: 700; }
+
+    /* Event posts */
+    .event-tpl { position: absolute; left: 190px; right: 190px; top: 380px; height: 760px; z-index: 4; border-radius: 34px; aspect-ratio: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.3); }
+    .event-tpl .tpl-top { font-size: 46px; }
+    .event-tpl .tpl-small { font-size: 20px; }
+    .event-tpl .tpl-names { font-size: 118px; margin: 18px 0; }
+    .event-tpl .tpl-date { font-size: 34px; }
+    .event-tpl .tpl-float { font-size: 70px; }
+
+    /* CTA post */
+    .big-cta {
+        position: absolute; left: 110px; right: 110px; top: 930px; z-index: 4; padding: 34px; border-radius: 999px;
+        background: #25d366; color: #0b3d1f; text-align: center; font-size: 46px; font-weight: 700;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+    .ticks-v { position: absolute; left: 150px; right: 150px; top: 610px; z-index: 4; display: grid; gap: 22px; color: #fff; font-size: 40px; font-weight: 700; }
+    .ticks-v div::before { content: "✓"; display: inline-grid; place-items: center; width: 56px; height: 56px; margin-right: 20px; border-radius: 50%; background: #fff; color: var(--pink); font-size: 32px; }
+
+    /* ---------- ADS ---------- */
+    .st { width: 1080px; height: 1920px; }
+
+    .hook {
+        position: absolute; left: 70px; right: 70px; z-index: 4; text-align: center;
+        font-family: var(--serif); font-weight: 600; line-height: 0.95; color: var(--plum);
+    }
+    .hook span { display: block; }
+    .sub { position: absolute; left: 90px; right: 90px; z-index: 4; text-align: center; font-size: 34px; font-weight: 500; color: var(--text-light); line-height: 1.4; }
+
+    .ad-cta {
+        position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); white-space: nowrap;
+        padding: 30px 56px; border-radius: 999px; background: #25d366; color: #0b3d1f;
+        font-size: 42px; font-weight: 700; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+    }
+    .ad-badge {
+        position: absolute; z-index: 6; padding: 16px 28px; border-radius: 999px; background: #fff;
+        font-size: 28px; font-weight: 700; color: var(--pink); box-shadow: 0 14px 34px rgba(90, 20, 60, 0.18);
+    }
+    .strike { position: relative; color: var(--text-light); }
+    .strike::after { content: ""; position: absolute; left: -6px; right: -6px; top: 52%; height: 8px; border-radius: 4px; background: var(--pink); transform: rotate(-4deg); }
+
+    .fan { position: absolute; z-index: 4; }
+    .fan .tpl { position: absolute; width: 330px; height: 460px; aspect-ratio: auto; border-radius: 26px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.28); }
+
+    .events { position: absolute; z-index: 4; left: 70px; right: 70px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .events .tpl { height: 500px; aspect-ratio: auto; border-radius: 22px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
+    .events .tpl-top { font-size: 24px; }
+    .events .tpl-names { font-size: 56px; }
+    .events .tpl-date { font-size: 18px; }
+
+    /* ---------- PRICE OFFER ---------- */
+    .offer-tag {
+        display: inline-block; padding: 12px 30px; border-radius: 999px; background: #fff3b0; color: #8a1538;
+        font-size: 28px; font-weight: 700; letter-spacing: 0.18em; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+    }
+    .prices { position: absolute; left: 70px; right: 70px; z-index: 4; display: grid; gap: 30px; }
+    .price-card {
+        position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px;
+        padding: 38px 40px; border-radius: 36px; background: #fff; box-shadow: 0 26px 60px rgba(0, 0, 0, 0.25);
+    }
+    .price-card .ic { font-size: 56px; line-height: 1; }
+    .price-card h3 { margin: 10px 0 0; font-family: var(--serif); font-size: 58px; font-weight: 700; line-height: 1; color: var(--plum); }
+    .price-card ul { margin: 16px 0 0; padding: 0; list-style: none; color: var(--text-light); font-size: 24px; line-height: 1.5; }
+    .price-card li::before { content: "✓ "; color: var(--pink); font-weight: 700; }
+    .price-card .amt { text-align: right; }
+    .price-card .old {
+        font-size: 44px; font-weight: 700; color: #9b8c96;
+        text-decoration: line-through; text-decoration-color: var(--pink); text-decoration-thickness: 5px;
+    }
+    .price-card .new {
+        display: block; font-family: var(--serif); font-size: 128px; font-weight: 700; line-height: 0.95;
+        background: var(--grad-festive); -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .price-card .save {
+        display: inline-block; margin-top: 10px; padding: 8px 18px; border-radius: 999px;
+        background: #25d366; color: #0b3d1f; font-size: 24px; font-weight: 700;
+    }
+    .price-note { position: absolute; left: 70px; right: 70px; z-index: 4; text-align: center; color: #fff; font-size: 30px; font-weight: 600; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ===================== PROFILE (1080 × 1080) ===================== -->
+<div class="canvas sq" id="profile">
+    <img class="mandala" src="../../images/mandala.svg" style="width:1300px;left:-110px;top:-110px;opacity:0.35">
+    <div class="ring">
+        <span class="L">L</span>
+        <span class="nm">LIBESOLE</span>
+    </div>
+</div>
+
+<!-- ===================== COVER (1640 × 624) ===================== -->
+<div class="canvas cv bg-cream" id="cover">
+    <div class="toran-top" style="height:100px;background-size:146px 100px"></div>
+    <span class="petal-s" style="left:120px;top:420px;background:#ff8fb8;transform:rotate(30deg)"></span>
+    <span class="petal-s" style="left:1030px;top:160px;background:#ffd166;transform:rotate(-20deg)"></span>
+    <span class="petal-s" style="left:980px;top:520px;background:#ff6b2c;transform:rotate(60deg)"></span>
+    <div class="txt">
+        <div class="eyebrow-lg" style="font-size:22px">DIGITAL INVITATIONS</div>
+        <h1>Your Story,<span class="grad-text">Beautifully Invited.</span></h1>
+        <span class="chip c-pink">🎬 Video Invites</span>
+        <span class="chip c-gold">💻 Wedding Websites</span>
+        <span class="chip c-teal">💌 E-Invite Cards</span>
+        <div class="line">WhatsApp <b>+91 63982 52681</b> &nbsp;·&nbsp; <b>invites.libesole.com</b></div>
+    </div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:620px;left:1010px;top:20px">
+    <div class="photo-m" style="left:1080px;top:150px;width:210px;height:280px;transform:rotate(-8deg)"><img src="../../images/i5.jpeg"></div>
+    <div class="phone-m" style="left:1230px;top:95px;width:230px;height:486px;transform:rotate(4deg)"><div class="scr"><img src="../../images/typo2.jpeg"></div></div>
+</div>
+
+<!-- ===================== POST 01 — LAUNCH ===================== -->
+<div class="canvas pt bg-cream" id="post-01">
+    <div class="toran-top"></div>
+    <div class="ph">
+        <div class="eyebrow-lg">INTRODUCING LIBESOLE</div>
+        <h2>Your Story,<span class="grad-text">Beautifully Invited.</span></h2>
+        <p>Video invitations · Wedding websites · E-invite cards</p>
+    </div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:760px;left:160px;top:530px">
+    <div class="photo-m" style="left:170px;top:640px;width:280px;height:370px;transform:rotate(-8deg)"><img src="../../images/i5.jpeg"></div>
+    <div class="phone-m" style="left:420px;top:560px;width:300px;height:640px;transform:rotate(3deg)"><div class="scr"><img src="../../images/typo2.jpeg"></div></div>
+    <span class="chip c-pink" style="position:absolute;right:90px;top:700px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.12)">💌 RSVP in one tap</span>
+    <span class="chip c-teal" style="position:absolute;right:120px;top:860px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.12)">🎵 Your song</span>
+    <span class="chip c-gold" style="position:absolute;right:80px;top:1010px;z-index:5;box-shadow:0 12px 30px rgba(0,0,0,.12)">🌐 Any language</span>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 02 — SERVICES ===================== -->
+<div class="canvas pt" id="post-02" style="background:var(--grad-royal)">
+    <img class="mandala" src="../../images/mandala.svg" style="width:900px;right:-300px;top:-260px;opacity:.3">
+    <div class="ph" style="top:110px;color:#fff">
+        <div class="eyebrow-lg" style="color:#f3d38b">WHAT WE CREATE</div>
+        <h2 style="color:#fff">Three Ways<span class="gold-text">To Invite.</span></h2>
+    </div>
+    <div class="stack" style="top:470px">
+        <div class="card-g"><span class="ic" style="background:linear-gradient(135deg,#e0337a,#ff6b2c)">🎬</span><div><h3>Video Invitations</h3><p>Cinematic invites with your photos, music and story.</p></div></div>
+        <div class="card-g"><span class="ic" style="background:linear-gradient(135deg,#f7a928,#ffd166)">💻</span><div><h3>Wedding Websites</h3><p>One link with your story, events, venue maps and RSVP.</p></div></div>
+        <div class="card-g"><span class="ic" style="background:linear-gradient(135deg,#0e8a8a,#3aa17e)">💌</span><div><h3>E-Invite Cards</h3><p>Beautiful cards for Haldi, Mehendi, Sangeet and more.</p></div></div>
+    </div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 03 — TEMPLATES ===================== -->
+<div class="canvas pt bg-cream" id="post-03">
+    <div class="toran-top"></div>
+    <div class="ph" style="top:160px">
+        <div class="eyebrow-lg">CHOOSE YOUR TEMPLATE</div>
+        <h2>A Colour For<span class="grad-text">Every Celebration.</span></h2>
+    </div>
+    <div class="tgrid">
+        <div class="tpl tpl-rani"><div class="tpl-frame"><p class="tpl-top" lang="hi">॥ शुभ विवाह ॥</p><strong class="tpl-names">Aarav <span>&amp;</span> Meera</strong><p class="tpl-date">18 · DEC · 2026</p></div></div>
+        <div class="tpl tpl-haldi"><div class="tpl-frame"><p class="tpl-top">Haldi Ceremony</p><strong class="tpl-names">Riya <span>&amp;</span> Kunal</strong><p class="tpl-date">10 AM · 16 DEC</p></div></div>
+        <div class="tpl tpl-peacock"><div class="tpl-frame"><p class="tpl-top">Sangeet Sandhya</p><strong class="tpl-names">Arjun <span>&amp;</span> Tara</strong><p class="tpl-date">7 PM · 17 DEC</p></div></div>
+        <div class="tpl tpl-midnight"><div class="tpl-stars"></div><div class="tpl-frame"><p class="tpl-top">Reception</p><strong class="tpl-names">Aarav <span>&amp;</span> Meera</strong><p class="tpl-date">8 PM · 19 DEC</p></div></div>
+    </div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 04 — HOW IT WORKS ===================== -->
+<div class="canvas pt" id="post-04" style="background:var(--grad-peacock)">
+    <img class="mandala" src="../../images/mandala.svg" style="width:900px;left:-320px;bottom:-200px;opacity:.28">
+    <div class="ph" style="top:110px">
+        <div class="eyebrow-lg" style="color:#f3d38b">SIMPLE &amp; QUICK</div>
+        <h2 style="color:#fff">Your Invitation<span class="gold-text">In 3 Easy Steps.</span></h2>
+    </div>
+    <div class="stack" style="top:480px">
+        <div class="card-g"><span class="ic num" style="background:linear-gradient(135deg,#e0337a,#ff6b2c)">1</span><div><h3>Choose a design</h3><p>Pick a template or share your own idea.</p></div></div>
+        <div class="card-g"><span class="ic num" style="background:linear-gradient(135deg,#f7a928,#ff6b2c)">2</span><div><h3>Send your details</h3><p>Names, dates, venues and photos on WhatsApp.</p></div></div>
+        <div class="card-g"><span class="ic num" style="background:linear-gradient(135deg,#6a2c91,#e0337a)">3</span><div><h3>Share with everyone</h3><p>Approve the preview and send it to every guest.</p></div></div>
+    </div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 05 — LANGUAGES ===================== -->
+<div class="canvas pt" id="post-05" style="background:radial-gradient(circle at 100% 0%,rgba(224,51,122,.18),transparent 40%),radial-gradient(circle at 0% 100%,rgba(247,169,40,.22),transparent 40%),#fff0f5">
+    <div class="toran-top"></div>
+    <div class="ph" style="top:160px">
+        <div class="eyebrow-lg">SPEAK TO EVERY GUEST</div>
+        <h2>Invites In<span class="grad-text">Your Language.</span></h2>
+    </div>
+    <div class="lgrid">
+        <div class="lcard"><b lang="hi">आप सादर आमंत्रित हैं</b><span style="color:#e0337a">HINDI</span></div>
+        <div class="lcard"><b>You're Invited</b><span style="color:#ff6b2c">ENGLISH</span></div>
+        <div class="lcard"><b lang="mr">आपणास सस्नेह निमंत्रण</b><span style="color:#c77700">MARATHI</span></div>
+        <div class="lcard"><b lang="ta">அன்புடன் அழைக்கிறோம்</b><span style="color:#0e8a8a">TAMIL</span></div>
+        <div class="lcard"><b lang="te">మీకు సాదర ఆహ్వానం</b><span style="color:#6a2c91">TELUGU</span></div>
+        <div class="lcard"><b lang="bn">আপনাকে সাদর আমন্ত্রণ</b><span style="color:#b81d5f">BENGALI</span></div>
+    </div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 06 — WEDDING WEBSITE ===================== -->
+<div class="canvas pt" id="post-06" style="background:radial-gradient(circle at 10% 15%,rgba(224,51,122,.3),transparent 40%),radial-gradient(circle at 90% 85%,rgba(14,138,138,.3),transparent 40%),#2a1030">
+    <div class="ph" style="top:110px">
+        <div class="eyebrow-lg" style="color:#f3d38b">WEDDING WEBSITES</div>
+        <h2 style="color:#fff">One Link.<span class="gold-text">Everything Inside.</span></h2>
+    </div>
+    <div class="browser">
+        <div class="bar"><span><i style="background:#ff6058"></i><i style="background:#ffbd2e"></i><i style="background:#28c940"></i></span><span class="url">invites.libesole.com/aarav-meera</span></div>
+        <div class="view"><div class="arch"><small>WE ARE GETTING MARRIED</small><h3>Aarav &amp; Meera</h3><small>18 · 12 · 2026 · NEW DELHI</small>
+            <div class="cd"><div><b>85</b><span>DAYS</span></div><div><b>06</b><span>HRS</span></div><div><b>42</b><span>MINS</span></div><div><b>18</b><span>SECS</span></div></div></div></div>
+    </div>
+    <div class="ticks"><span>✓ Our Story</span><span>✓ All Events</span><span>✓ Gallery</span><span>✓ RSVP &amp; Maps</span></div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 07 — HALDI ===================== -->
+<div class="canvas pt" id="post-07" style="background:linear-gradient(160deg,#fff3c4,#ffd97a)">
+    <div class="ph" style="top:90px">
+        <div class="eyebrow-lg" style="color:#b3430b">HALDI INVITES</div>
+        <h2 style="color:#7a2e00;font-size:92px">A Splash of <span class="grad-text">Sunshine.</span></h2>
+    </div>
+    <div class="tpl tpl-haldi event-tpl"><span class="tpl-float" style="top:18px;right:24px">🌼</span><div class="tpl-frame"><p class="tpl-top">Haldi Ceremony</p><p class="tpl-small">JOIN US FOR A SPLASH OF YELLOW</p><strong class="tpl-names">Riya <span>&amp;</span> Kunal</strong><p class="tpl-date">10 AM · 16 DEC</p><p class="tpl-small">DRESS CODE: YELLOW</p></div></div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 08 — SANGEET ===================== -->
+<div class="canvas pt" id="post-08" style="background:linear-gradient(160deg,#0a3f4a,#3b1248)">
+    <div class="ph" style="top:90px">
+        <div class="eyebrow-lg" style="color:#f3d38b">SANGEET INVITES</div>
+        <h2 style="color:#fff;font-size:92px">Music, Dance &amp; <span class="gold-text">Magic.</span></h2>
+    </div>
+    <div class="tpl tpl-peacock event-tpl"><div class="tpl-frame"><p class="tpl-top">Sangeet Sandhya</p><p class="tpl-small">AN EVENING OF MUSIC &amp; DANCE</p><strong class="tpl-names">Arjun <span>&amp;</span> Tara</strong><p class="tpl-date">7 PM · 17 DEC</p><p class="tpl-small">THE GRAND BALLROOM</p></div></div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== POST 09 — BOOK NOW ===================== -->
+<div class="canvas pt" id="post-09" style="background:linear-gradient(150deg,#3b1248 0%,#8a1538 45%,#e0337a 80%,#ff6b2c 100%)">
+    <div class="toran-top"></div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:1000px;left:40px;top:260px;opacity:.22">
+    <div class="ph" style="top:180px">
+        <div class="eyebrow-lg" style="color:#f3d38b">WEDDING SEASON IS HERE</div>
+        <h2 style="color:#fff">Book Your<span class="gold-text">Invitation Today.</span></h2>
+    </div>
+    <div class="ticks-v">
+        <div>Free preview before delivery</div>
+        <div>English, Hindi &amp; regional languages</div>
+        <div>Delivered straight to WhatsApp</div>
+    </div>
+    <div class="big-cta">💬 WhatsApp +91 63982 52681</div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">invites.libesole.com<span>@libesole</span></div></div>
+</div>
+
+<!-- ===================== AD A — "Wedding in the family?" (1:1) ===================== -->
+<div class="canvas sq bg-cream" id="ad-a-square">
+    <div class="toran-top" style="height:100px;background-size:146px 100px"></div>
+    <div class="hook" style="top:130px;font-size:92px">Wedding in the family?<span class="grad-text">Invite in style.</span></div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:640px;left:220px;top:370px">
+    <div class="photo-m" style="left:250px;top:430px;width:220px;height:290px;transform:rotate(-8deg)"><img src="../../images/i5.jpeg"></div>
+    <div class="phone-m" style="left:430px;top:360px;width:250px;height:530px;transform:rotate(3deg)"><div class="scr"><img src="../../images/typo2.jpeg"></div></div>
+    <div class="ad-badge" style="right:120px;top:520px">🎬 Video invites</div>
+    <div class="ad-badge" style="right:100px;top:640px;color:#0a5c63">🌐 Any language</div>
+    <div class="ad-cta" style="bottom:50px;font-size:38px;padding:26px 50px">💬 Get a free preview on WhatsApp</div>
+</div>
+
+<!-- ===================== AD A — STORY / REEL (9:16) ===================== -->
+<div class="canvas st bg-cream" id="ad-a-story">
+    <div class="toran-top" style="top:250px"></div>
+    <div class="hook" style="top:420px;font-size:118px">Wedding in the family?<span class="grad-text">Invite in style.</span></div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:900px;left:90px;top:760px">
+    <div class="photo-m" style="left:140px;top:860px;width:290px;height:380px;transform:rotate(-8deg)"><img src="../../images/i5.jpeg"></div>
+    <div class="phone-m" style="left:390px;top:760px;width:330px;height:700px;transform:rotate(3deg)"><div class="scr"><img src="../../images/typo2.jpeg"></div></div>
+    <div class="ad-badge" style="right:80px;top:900px">🎬 Video invites</div>
+    <div class="ad-badge" style="right:60px;top:1030px;color:#0a5c63">💻 Wedding websites</div>
+    <div class="ad-badge" style="right:90px;top:1160px;color:#9a5b00">🌐 Any language</div>
+    <div class="ad-cta" style="top:1530px">💬 Free preview on WhatsApp</div>
+</div>
+
+<!-- ===================== AD B — "Skip printing" (4:5) ===================== -->
+<div class="canvas pt" id="ad-b-portrait" style="background:var(--grad-royal)">
+    <img class="mandala" src="../../images/mandala.svg" style="width:900px;right:-280px;top:-240px;opacity:.28">
+    <div class="hook" style="top:110px;font-size:100px;color:#fff">Skip the printing.<span class="gold-text">Send it in one tap.</span></div>
+    <div class="sub" style="top:370px;color:rgba(255,255,255,.85)">Beautiful digital invites for every function, delivered to your WhatsApp.</div>
+    <div class="fan" style="left:0;right:0;top:520px;height:560px">
+        <div class="tpl tpl-haldi" style="left:95px;top:60px;transform:rotate(-10deg)"><div class="tpl-frame"><p class="tpl-top">Haldi</p><strong class="tpl-names">Riya</strong><p class="tpl-date">16 DEC</p></div></div>
+        <div class="tpl tpl-peacock" style="left:640px;top:60px;transform:rotate(10deg)"><div class="tpl-frame"><p class="tpl-top">Sangeet</p><strong class="tpl-names">Tara</strong><p class="tpl-date">17 DEC</p></div></div>
+        <div class="tpl tpl-rani" style="left:375px;top:0;z-index:2"><div class="tpl-frame"><p class="tpl-top" lang="hi">॥ शुभ विवाह ॥</p><strong class="tpl-names">Aarav <span>&amp;</span> Meera</strong><p class="tpl-date">18 · DEC</p></div></div>
+    </div>
+    <div class="ad-cta" style="bottom:70px">💬 Chat on WhatsApp</div>
+</div>
+
+<!-- ===================== AD B — STORY / REEL (9:16) ===================== -->
+<div class="canvas st" id="ad-b-story" style="background:var(--grad-royal)">
+    <img class="mandala" src="../../images/mandala.svg" style="width:1100px;right:-380px;top:120px;opacity:.25">
+    <div class="hook" style="top:360px;font-size:120px;color:#fff">Skip the printing.<span class="gold-text">Send it in one tap.</span></div>
+    <div class="sub" style="top:680px;color:rgba(255,255,255,.85);font-size:38px">Digital invites for Haldi, Mehendi, Sangeet &amp; Wedding.</div>
+    <div class="fan" style="left:0;right:0;top:860px;height:600px">
+        <div class="tpl tpl-haldi" style="left:95px;top:70px;transform:rotate(-10deg)"><div class="tpl-frame"><p class="tpl-top">Haldi</p><strong class="tpl-names">Riya</strong><p class="tpl-date">16 DEC</p></div></div>
+        <div class="tpl tpl-peacock" style="left:640px;top:70px;transform:rotate(10deg)"><div class="tpl-frame"><p class="tpl-top">Sangeet</p><strong class="tpl-names">Tara</strong><p class="tpl-date">17 DEC</p></div></div>
+        <div class="tpl tpl-rani" style="left:375px;top:0;z-index:2"><div class="tpl-frame"><p class="tpl-top" lang="hi">॥ शुभ विवाह ॥</p><strong class="tpl-names">Aarav <span>&amp;</span> Meera</strong><p class="tpl-date">18 · DEC</p></div></div>
+    </div>
+    <div class="ad-cta" style="top:1500px">💬 Chat on WhatsApp</div>
+</div>
+
+<!-- ===================== AD C — "Every function" (1:1) ===================== -->
+<div class="canvas sq" id="ad-c-square" style="background:radial-gradient(circle at 100% 0%,rgba(224,51,122,.18),transparent 40%),radial-gradient(circle at 0% 100%,rgba(247,169,40,.25),transparent 40%),#fff0f5">
+    <div class="hook" style="top:70px;font-size:86px">One designer.<span class="grad-text">Every function.</span></div>
+    <div class="sub" style="top:290px;font-size:30px">Matching invites for your whole wedding, in any language.</div>
+    <div class="events" style="top:400px">
+        <div class="tpl tpl-haldi"><div class="tpl-frame"><p class="tpl-top">Haldi</p><strong class="tpl-names">Riya</strong><p class="tpl-date">16 DEC</p></div></div>
+        <div class="tpl tpl-mehendi"><div class="tpl-frame"><p class="tpl-top">Mehendi</p><strong class="tpl-names">Riya</strong><p class="tpl-date">16 DEC</p></div></div>
+        <div class="tpl tpl-peacock"><div class="tpl-frame"><p class="tpl-top">Sangeet</p><strong class="tpl-names">Riya</strong><p class="tpl-date">17 DEC</p></div></div>
+        <div class="tpl tpl-rani"><div class="tpl-frame"><p class="tpl-top">Wedding</p><strong class="tpl-names">Riya</strong><p class="tpl-date">18 DEC</p></div></div>
+    </div>
+    <div class="ad-cta" style="bottom:60px;font-size:38px;padding:26px 50px">💬 WhatsApp 63982 52681</div>
+</div>
+
+<!-- ===================== PRICE OFFER — POST (4:5) ===================== -->
+<div class="canvas pt" id="price-post" style="background:linear-gradient(155deg,#3b1248 0%,#8a1538 45%,#e0337a 80%,#ff6b2c 100%)">
+    <div class="toran-top"></div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:1000px;left:40px;top:220px;opacity:.2">
+    <div class="ph" style="top:150px">
+        <span class="offer-tag">🎉 LAUNCH OFFER</span>
+        <h2 style="color:#fff;font-size:100px">Special Prices<span class="gold-text">For Your Big Day.</span></h2>
+    </div>
+    <div class="prices" style="top:480px">
+        <div class="price-card">
+            <div><span class="ic">💻</span><h3>Wedding Website<br>Invitation</h3><ul><li>Story, events &amp; gallery</li><li>RSVP, maps &amp; countdown</li></ul></div>
+            <div class="amt"><span class="old">₹7,999</span><span class="new">₹2,999</span><span class="save">SAVE ₹5,000</span></div>
+        </div>
+        <div class="price-card">
+            <div><span class="ic">🎬</span><h3>Video<br>Invitation</h3><ul><li>Your photos &amp; music</li><li>Any Indian language</li></ul></div>
+            <div class="amt"><span class="old">₹4,999</span><span class="new">₹1,999</span><span class="save">SAVE ₹3,000</span></div>
+        </div>
+    </div>
+    <div class="foot"><div class="brand"><span class="mark">L</span><span class="name">Libesole<small>INVITATIONS</small></span></div><div class="contact">WhatsApp 63982 52681<span>invites.libesole.com</span></div></div>
+</div>
+
+<!-- ===================== PRICE OFFER — STORY / REEL (9:16) ===================== -->
+<div class="canvas st" id="price-story" style="background:linear-gradient(160deg,#3b1248 0%,#8a1538 45%,#e0337a 80%,#ff6b2c 100%)">
+    <div class="toran-top" style="top:240px"></div>
+    <img class="mandala" src="../../images/mandala.svg" style="width:1200px;left:-60px;top:560px;opacity:.18">
+    <div class="ph" style="top:420px">
+        <span class="offer-tag">🎉 LAUNCH OFFER</span>
+        <h2 style="color:#fff;font-size:112px">Special Prices<span class="gold-text">For Your Big Day.</span></h2>
+    </div>
+    <div class="prices" style="top:740px">
+        <div class="price-card">
+            <div><span class="ic">💻</span><h3>Wedding Website<br>Invitation</h3><ul><li>Story, events &amp; gallery</li><li>RSVP, maps &amp; countdown</li></ul></div>
+            <div class="amt"><span class="old">₹7,999</span><span class="new">₹2,999</span><span class="save">SAVE ₹5,000</span></div>
+        </div>
+        <div class="price-card">
+            <div><span class="ic">🎬</span><h3>Video<br>Invitation</h3><ul><li>Your photos &amp; music</li><li>Any Indian language</li></ul></div>
+            <div class="amt"><span class="old">₹4,999</span><span class="new">₹1,999</span><span class="save">SAVE ₹3,000</span></div>
+        </div>
+    </div>
+    <div class="ad-cta" style="top:1560px">💬 Book on WhatsApp 63982 52681</div>
+</div>
+
+<!-- ===================== PRICE OFFER — SQUARE (1:1, ads) ===================== -->
+<div class="canvas sq" id="price-square" style="background:linear-gradient(150deg,#3b1248 0%,#8a1538 45%,#e0337a 80%,#ff6b2c 100%)">
+    <img class="mandala" src="../../images/mandala.svg" style="width:900px;right:-300px;top:-300px;opacity:.2">
+    <div class="ph" style="top:50px">
+        <span class="offer-tag" style="font-size:24px">🎉 LAUNCH OFFER</span>
+        <h2 style="color:#fff;font-size:84px;margin-top:12px">Special Prices <span class="gold-text" style="display:inline">for you.</span></h2>
+    </div>
+    <div class="prices" style="top:260px;gap:26px">
+        <div class="price-card" style="padding:34px 38px">
+            <div><span class="ic" style="font-size:44px">💻</span><h3 style="font-size:48px">Wedding Website<br>Invitation</h3></div>
+            <div class="amt"><span class="old" style="font-size:36px">₹7,999</span><span class="new" style="font-size:104px">₹2,999</span><span class="save">SAVE ₹5,000</span></div>
+        </div>
+        <div class="price-card" style="padding:34px 38px">
+            <div><span class="ic" style="font-size:44px">🎬</span><h3 style="font-size:48px">Video<br>Invitation</h3></div>
+            <div class="amt"><span class="old" style="font-size:36px">₹4,999</span><span class="new" style="font-size:104px">₹1,999</span><span class="save">SAVE ₹3,000</span></div>
+        </div>
+    </div>
+    <div class="ad-cta" style="bottom:50px;font-size:36px;padding:24px 46px">💬 Book on WhatsApp 63982 52681</div>
+</div>
+
+<!-- ===================== REEL CAPTION OVERLAYS (transparent, 9:16) ===================== -->
+<style>
+    html.clear, html.clear body, html.clear .canvas { background: transparent !important; }
+    .cap-top, .cap-bottom { position: absolute; left: 60px; right: 60px; text-align: center; color: #fff; text-shadow: 0 4px 24px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.5); }
+    .cap-pill { display: inline-block; padding: 12px 28px; border-radius: 999px; background: var(--grad-festive); font-size: 26px; font-weight: 700; letter-spacing: .18em; text-shadow: none; }
+    .cap-big { display: table; margin: 18px auto 0; padding: 26px 46px 32px; border-radius: 34px; background: rgba(42,16,48,.78); text-shadow: none; font-family: var(--serif); font-size: 96px; font-weight: 700; line-height: .95; }
+    .cap-mid { font-size: 44px; font-weight: 700; line-height: 1.3; }
+    .cap-band { display: inline-block; padding: 18px 34px; border-radius: 24px; background: rgba(42,16,48,.72); text-shadow: none; }
+</style>
+<div class="canvas st" id="reel-cap-1">
+    <div class="cap-top" style="top:250px"><span class="cap-pill">LIBESOLE · VIDEO INVITES</span><div class="cap-big">Wedding in<br>the family?</div></div>
+    <div class="cap-bottom" style="top:1420px"><span class="cap-band cap-mid">Your story, your song,<br>your language ✨</span></div>
+</div>
+<div class="canvas st" id="reel-cap-2">
+    <div class="cap-top" style="top:250px"><span class="cap-pill">MADE JUST FOR YOU</span><div class="cap-big">Invite in<br>style 💌</div></div>
+    <div class="cap-bottom" style="top:1420px"><span class="cap-band cap-mid">Launch offer prices 👇</span></div>
+</div>
+
+<script>
+    const id = (location.hash || "#profile").slice(1);
+    const el = document.getElementById(id);
+    if (el) el.classList.add("show");
+    if (id.startsWith("reel-cap")) document.documentElement.classList.add("clear");
+</script>
+</body>
+</html>

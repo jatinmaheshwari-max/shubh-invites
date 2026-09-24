@@ -263,6 +263,11 @@ languageTabs.forEach((tab) => {
 const videos = document.querySelectorAll(".invitation-video");
 
 videos.forEach((video) => {
+
+    /* Discourage saving: no right-click "Save video as…" or dragging */
+    video.addEventListener("contextmenu", (event) => event.preventDefault());
+    video.addEventListener("dragstart", (event) => event.preventDefault());
+
     video.addEventListener("play", () => {
         videos.forEach((other) => {
             if (other !== video) {

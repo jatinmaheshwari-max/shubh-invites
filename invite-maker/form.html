@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libesole Invite Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --pink: #e0337a; --saffron: #ff6b2c; --gold: #f7a928; --teal: #0e8a8a; --plum: #3b1248;
+        --ink: #2a1a24; --muted: #6d5b66; --line: rgba(42, 16, 48, 0.12); --bg: #fff8ef;
+        --grad: linear-gradient(120deg, #e0337a, #ff6b2c 55%, #f7a928);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; line-height: 1.5; }
+    header { background: var(--grad); color: #fff; padding: 22px 16px; text-align: center; }
+    header h1 { margin: 0; font-family: "Cormorant Garamond", serif; font-size: 2.4rem; line-height: 1; }
+    header p { margin: 6px 0 0; opacity: 0.95; }
+    main { max-width: 860px; margin: 0 auto; padding: 20px 16px 140px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-bottom: 8px; }
+    .link-btn { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font: 700 0.82rem "DM Sans"; color: var(--plum); cursor: pointer; }
+    .link-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+    fieldset { border: 1px solid var(--line); border-radius: 20px; background: #fff; padding: 18px 20px 20px; margin: 18px 0 0; }
+    legend { padding: 0 8px; font-family: "Cormorant Garamond", serif; font-size: 1.6rem; font-weight: 600; color: var(--plum); }
+    legend small { font-family: "DM Sans", sans-serif; font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-left: 6px; }
+    .row { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 12px; }
+    @media (min-width: 640px) { .row.two { grid-template-columns: 1fr 1fr; } .row.three { grid-template-columns: 1fr 1fr 1fr; } }
+    label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 5px; color: var(--plum); }
+    label small { font-weight: 500; color: var(--muted); }
+    input[type=text], input[type=date], input[type=tel], textarea, select {
+        width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+        background: #fffcf8; font: 1rem "DM Sans", sans-serif; color: var(--ink);
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(224, 51, 122, 0.12); background: #fff; }
+    .hint { font-size: 0.82rem; color: var(--muted); margin: 6px 0 0; }
+
+    .themes { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); margin-top: 10px; }
+    @media (min-width: 640px) { .themes { grid-template-columns: repeat(4, 1fr); } }
+    .theme { position: relative; cursor: pointer; }
+    .theme input { position: absolute; opacity: 0; }
+    .theme .sw { display: block; height: 110px; border-radius: 16px; border: 3px solid transparent; box-shadow: 0 6px 16px rgba(0,0,0,.08);
+                 display: grid; place-items: center; font-family: "Cormorant Garamond", serif; font-size: 1.5rem; font-weight: 600; }
+    .theme input:checked + .sw { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(224,51,122,.25); }
+    .theme b { display: block; text-align: center; margin-top: 6px; font-size: 0.88rem; }
+
+    .radio-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--ink); }
+
+    .event { display: grid; gap: 8px; grid-template-columns: 1fr; padding: 12px; border: 1px dashed rgba(224,51,122,.3); border-radius: 14px; margin-top: 10px; position: relative; }
+    @media (min-width: 640px) { .event { grid-template-columns: 1.1fr 1fr .8fr 1.4fr auto; align-items: end; } }
+    .remove { border: 0; background: #ffe1ec; color: var(--pink); border-radius: 10px; min-height: 44px; padding: 0 12px; font-weight: 700; cursor: pointer; }
+
+    .photos { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .thumb { position: relative; width: 96px; height: 120px; border-radius: 12px; overflow: hidden; border: 2px solid var(--line); background: #f3ecf1; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
+    .file-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 999px; background: #fff0f5; color: var(--pink); font-weight: 700; cursor: pointer; border: 1px dashed var(--pink); }
+    .file-btn input { display: none; }
+    .check { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-weight: 500; }
+    .check input { width: 18px; height: 18px; accent-color: var(--pink); }
+
+    .actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; gap: 10px; justify-content: center;
+               padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(255, 248, 239, 0.96); border-top: 1px solid var(--line); backdrop-filter: blur(8px); }
+    .btn { border: 0; border-radius: 999px; min-height: 52px; padding: 0 26px; font: 700 1rem "DM Sans"; cursor: pointer; }
+    .btn-ghost { background: #fff; border: 2px solid var(--pink); color: var(--pink); }
+    .btn-main { background: var(--grad); color: #fff; box-shadow: 0 10px 24px rgba(224,51,122,.3); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(20, 8, 20, 0.75); padding: 16px; }
+    .modal.open { display: flex; }
+    .modal-box { position: relative; background: #fff; border-radius: 22px; padding: 18px; width: min(92vw, 520px); max-height: 94vh; display: flex; flex-direction: column; gap: 12px; }
+    .modal-box h2 { margin: 0; font-family: "Cormorant Garamond", serif; color: var(--plum); font-size: 1.8rem; }
+    .close { position: absolute; top: 10px; right: 12px; border: 0; background: #f3ecf1; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
+    #preview-frame { width: 100%; aspect-ratio: 9 / 16; max-height: 76vh; border: 0; border-radius: 14px; background: #111; }
+    .bar { height: 14px; border-radius: 999px; background: #f3ecf1; overflow: hidden; }
+    .bar span { display: block; height: 100%; width: 0; background: var(--grad); transition: width .3s ease; }
+    #result video { width: 100%; max-height: 60vh; border-radius: 14px; background: #111; }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .result-actions a, .result-actions button { flex: 1; text-align: center; text-decoration: none; }
+    .error { color: #b3261e; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Libesole Invite Maker</h1>
+    <p>Fill in the client's details, preview, and create the video invitation.</p>
+</header>
+
+<main>
+    <div class="toolbar">
+        <button class="link-btn" type="button" id="sample-btn">✨ Fill sample details</button>
+        <button class="link-btn" type="button" id="clear-btn">🗑 New client (clear form)</button>
+    </div>
+
+    <form id="form" autocomplete="off">
+
+        <fieldset>
+            <legend>1 · Theme</legend>
+            <div class="themes">
+                <label class="theme"><input type="radio" name="theme" value="royal" checked><span class="sw" style="background:radial-gradient(circle at 50% 30%,#a3203f,#2a0a1a);color:#f3d38b">Royal</span><b>Royal maroon</b></label>
+                <label class="theme"><input type="radio" name="theme" value="peacock"><span class="sw" style="background:radial-gradient(circle at 50% 30%,#138a8a,#1f1446);color:#f3d38b">Peacock</span><b>Peacock teal</b></label>
+                <label class="theme"><input type="radio" name="theme" value="blush"><span class="sw" style="background:radial-gradient(circle at 50% 30%,#fffafc,#ffd8c6);color:#b81d5f">Blush</span><b>Blush pastel</b></label>
+                <label class="theme"><input type="radio" name="theme" value="marigold"><span class="sw" style="background:radial-gradient(circle at 50% 30%,#fff6c9,#ff9f1c);color:#9c3d00">Marigold</span><b>Marigold yellow</b></label>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>2 · Couple</legend>
+            <div class="row two">
+                <div><label for="groom">Groom's name</label><input type="text" id="groom" name="groom" placeholder="Aarav"></div>
+                <div><label for="bride">Bride's name</label><input type="text" id="bride" name="bride" placeholder="Meera"></div>
+            </div>
+            <div class="row">
+                <div>
+                    <label>Show first</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="showFirst" value="groom" checked> Groom first (groom's family invites)</label>
+                        <label><input type="radio" name="showFirst" value="bride"> Bride first (bride's family invites)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row two">
+                <div><label for="groomParents">Groom's parents <small>(optional)</small></label><input type="text" id="groomParents" name="groomParents" placeholder="S/o Mrs. Anita & Mr. Rajesh Mehta"></div>
+                <div><label for="brideParents">Bride's parents <small>(optional)</small></label><input type="text" id="brideParents" name="brideParents" placeholder="D/o Mrs. Sunita & Mr. Vijay Sharma"></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>3 · Opening lines</legend>
+            <div class="row">
+                <div><label for="blessing">Blessing <small>(leave empty to skip)</small></label><input type="text" id="blessing" name="blessing" value="॥ श्री गणेशाय नमः ॥"></div>
+            </div>
+            <div class="row two">
+                <div><label for="introLine">Intro line</label><input type="text" id="introLine" name="introLine" value="Together with their families"></div>
+                <div><label for="inviteLine">Invitation line</label><input type="text" id="inviteLine" name="inviteLine" value="invite you to celebrate the wedding of"></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>4 · Wedding day</legend>
+            <div class="row two">
+                <div><label for="date">Wedding date</label><input type="date" id="date" name="date"></div>
+                <div><label for="time">Time <small>(optional)</small></label><input type="text" id="time" name="time" placeholder="7:00 PM onwards"></div>
+            </div>
+            <div class="row two">
+                <div><label for="venue">Venue</label><input type="text" id="venue" name="venue" placeholder="The Leela Palace"></div>
+                <div><label for="city">City</label><input type="text" id="city" name="city" placeholder="New Delhi"></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>5 · Events <small>each event gets its own scene</small></legend>
+            <div id="events"></div>
+            <button class="link-btn" type="button" id="add-event" style="margin-top:12px">+ Add event</button>
+        </fieldset>
+
+        <fieldset>
+            <legend>6 · Photos <small>optional</small></legend>
+            <label>Couple photo <small>(shown with the names in an arch frame)</small></label>
+            <div class="photos" id="couple-photo"></div>
+            <label class="file-btn" style="margin-top:8px">📷 Choose couple photo<input type="file" id="couple-input" accept="image/*"></label>
+
+            <label style="margin-top:18px">Gallery photos <small>(up to 4)</small></label>
+            <div class="photos" id="gallery"></div>
+            <label class="file-btn" style="margin-top:8px">🖼 Add gallery photos<input type="file" id="gallery-input" accept="image/*" multiple></label>
+            <div class="row"><div><label for="galleryTitle">Gallery title</label><input type="text" id="galleryTitle" name="galleryTitle" value="Our moments"></div></div>
+        </fieldset>
+
+        <fieldset>
+            <legend>7 · Music <small>optional</small></legend>
+            <label class="file-btn">🎵 Choose song (MP3 / M4A / WAV)<input type="file" id="music-input" accept="audio/*"></label>
+            <p class="hint" id="music-name">No song chosen. The video will be silent (you can add music later in Facebook/Instagram).</p>
+            <p class="hint">Use music you have the right to use: songs the client sends you, or free music from the YouTube Audio Library or Pixabay Music. Film songs can get videos muted on Facebook/Instagram.</p>
+        </fieldset>
+
+        <fieldset>
+            <legend>8 · Closing &amp; RSVP</legend>
+            <div class="row"><div><label for="closing">Closing message</label><input type="text" id="closing" name="closing" value="Your presence will make our celebration complete"></div></div>
+            <div class="row two">
+                <div><label for="rsvp">RSVP <small>(name &amp; phone)</small></label><input type="text" id="rsvp" name="rsvp" placeholder="Sharma Family · +91 98765 43210"></div>
+                <div><label for="signOff">Sign-off <small>(optional)</small></label><input type="text" id="signOff" name="signOff" placeholder="With love, Sharma & Mehta families"></div>
+            </div>
+            <label class="check"><input type="checkbox" id="watermark" name="watermark"> Show "Invitation by Libesole" at the bottom <small style="color:var(--muted)">(good for samples; untick for paid orders)</small></label>
+        </fieldset>
+    </form>
+</main>
+
+<div class="actions">
+    <button class="btn btn-ghost" type="button" id="preview-btn">▶ Preview</button>
+    <button class="btn btn-main" type="button" id="create-btn">🎬 Create Video</button>
+</div>
+
+<!-- Preview -->
+<div class="modal" id="preview-modal">
+    <div class="modal-box">
+        <button class="close" type="button" data-close>✕</button>
+        <h2>Preview</h2>
+        <iframe id="preview-frame" title="Invitation preview"></iframe>
+        <p class="hint">This is a live preview. The final video looks the same, in full quality and with music.</p>
+    </div>
+</div>
+
+<!-- Render progress / result -->
+<div class="modal" id="render-modal">
+    <div class="modal-box">
+        <button class="close" type="button" data-close>✕</button>
+        <h2 id="render-title">Creating video…</h2>
+        <div id="progress-area">
+            <div class="bar"><span id="bar"></span></div>
+            <p class="hint" id="progress-text">Starting…</p>
+            <p class="hint">This usually takes 1–3 minutes. You can keep this page open and wait.</p>
+        </div>
+        <div id="result" hidden>
+            <video id="result-video" controls playsinline></video>
+            <div class="result-actions" style="margin-top:10px">
+                <a class="btn btn-main" id="download-link" href="#" style="display:grid;place-items:center">⬇ Download</a>
+                <button class="btn btn-ghost" type="button" id="open-folder">📂 Open folder</button>
+            </div>
+        </div>
+        <p class="error" id="render-error" hidden></p>
+    </div>
+</div>
+
+<script>
+const form = document.getElementById("form");
+const eventsBox = document.getElementById("events");
+const DRAFT_KEY = "libesole-invite-draft";
+
+let couplePhoto = null;   // data URL
+let gallery = [];         // data URLs
+let music = null;         // { name, dataUrl }
+
+/* ---------- Events repeater ---------- */
+
+function addEventRow(ev = {}) {
+    const row = document.createElement("div");
+    row.className = "event";
+    row.innerHTML = `
+        <div><label>Event</label><input type="text" data-k="name" placeholder="Haldi"></div>
+        <div><label>Date</label><input type="date" data-k="date"></div>
+        <div><label>Time</label><input type="text" data-k="time" placeholder="10:00 AM"></div>
+        <div><label>Venue</label><input type="text" data-k="venue" placeholder="Sharma Niwas"></div>
+        <button type="button" class="remove" title="Remove event">✕</button>`;
+    row.querySelectorAll("input").forEach((input) => { input.value = ev[input.dataset.k] || ""; });
+    row.querySelector(".remove").addEventListener("click", () => { row.remove(); saveDraft(); });
+    eventsBox.appendChild(row);
+}
+
+document.getElementById("add-event").addEventListener("click", () => addEventRow());
+
+/* ---------- Collect data ---------- */
+
+function collect() {
+    const f = new FormData(form);
+    const text = (k) => (f.get(k) || "").toString().trim();
+    return {
+        theme: text("theme") || "royal",
+        groom: text("groom"), bride: text("bride"), showFirst: text("showFirst") || "groom",
+        groomParents: text("groomParents"), brideParents: text("brideParents"),
+        blessing: text("blessing"), introLine: text("introLine"), inviteLine: text("inviteLine"),
+        date: text("date"), time: text("time"), venue: text("venue"), city: text("city"),
+        events: [...eventsBox.querySelectorAll(".event")].map((row) => {
+            const ev = {};
+            row.querySelectorAll("input").forEach((input) => { ev[input.dataset.k] = input.value.trim(); });
+            return ev;
+        }).filter((ev) => ev.name),
+        galleryTitle: text("galleryTitle"),
+        closing: text("closing"), rsvp: text("rsvp"), signOff: text("signOff"),
+        watermark: document.getElementById("watermark").checked
+    };
+}
+
+function fill(data) {
+    form.reset();
+    Object.entries(data).forEach(([key, value]) => {
+        if (key === "events" || key === "watermark") return;
+        const radios = form.querySelectorAll(`input[type=radio][name="${key}"]`);
+        if (radios.length) { radios.forEach((r) => { r.checked = r.value === value; }); return; }
+        const input = form.elements[key];
+        if (input && typeof value === "string") input.value = value;
+    });
+    document.getElementById("watermark").checked = !!data.watermark;
+    eventsBox.innerHTML = "";
+    (data.events && data.events.length ? data.events : [{ name: "Haldi" }, { name: "Mehendi" }, { name: "Sangeet" }, { name: "Wedding" }]).forEach(addEventRow);
+}
+
+/* ---------- Draft autosave (text only) ---------- */
+
+function saveDraft() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch (e) { /* ignore */ }
+}
+form.addEventListener("input", saveDraft);
+form.addEventListener("change", saveDraft);
+
+(function loadDraft() {
+    let draft = null;
+    try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch (e) { /* ignore */ }
+    if (draft) fill(draft); else fill({ events: [] });
+})();
+
+/* ---------- Photos (resized in the browser) ---------- */
+
+function resizeImage(file, max = 1400) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const scale = Math.min(1, max / Math.max(img.width, img.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(img.src);
+            resolve(canvas.toDataURL("image/jpeg", 0.9));
+        };
+        img.onerror = reject;
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+function thumb(src, onRemove) {
+    const box = document.createElement("div");
+    box.className = "thumb";
+    box.innerHTML = `<img alt=""><button type="button" title="Remove">✕</button>`;
+    box.querySelector("img").src = src;
+    box.querySelector("button").addEventListener("click", onRemove);
+    return box;
+}
+
+function drawPhotos() {
+    const coupleBox = document.getElementById("couple-photo");
+    coupleBox.innerHTML = "";
+    if (couplePhoto) coupleBox.appendChild(thumb(couplePhoto, () => { couplePhoto = null; drawPhotos(); }));
+
+    const galleryBox = document.getElementById("gallery");
+    galleryBox.innerHTML = "";
+    gallery.forEach((src, i) => galleryBox.appendChild(thumb(src, () => { gallery.splice(i, 1); drawPhotos(); })));
+}
+
+document.getElementById("couple-input").addEventListener("change", async (e) => {
+    if (e.target.files[0]) couplePhoto = await resizeImage(e.target.files[0]);
+    e.target.value = "";
+    drawPhotos();
+});
+
+document.getElementById("gallery-input").addEventListener("change", async (e) => {
+    for (const file of [...e.target.files]) {
+        if (gallery.length >= 4) break;
+        gallery.push(await resizeImage(file));
+    }
+    e.target.value = "";
+    drawPhotos();
+});
+
+document.getElementById("music-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        music = { name: file.name, dataUrl: reader.result };
+        document.getElementById("music-name").textContent = "🎵 " + file.name;
+    };
+    reader.readAsDataURL(file);
+});
+
+/* ---------- Sample & clear ---------- */
+
+document.getElementById("sample-btn").addEventListener("click", () => {
+    fill({
+        theme: "royal", groom: "Aarav", bride: "Meera", showFirst: "groom",
+        groomParents: "S/o Mrs. Anita & Mr. Rajesh Mehta", brideParents: "D/o Mrs. Sunita & Mr. Vijay Sharma",
+        blessing: "॥ श्री गणेशाय नमः ॥", introLine: "Together with their families", inviteLine: "invite you to celebrate the wedding of",
+        date: "2026-12-18", time: "7:00 PM onwards", venue: "The Leela Palace", city: "New Delhi",
+        events: [
+            { name: "Haldi", date: "2026-12-16", time: "10:00 AM", venue: "Sharma Niwas, Delhi" },
+            { name: "Mehendi", date: "2026-12-16", time: "4:00 PM", venue: "Garden Courtyard" },
+            { name: "Sangeet", date: "2026-12-17", time: "7:00 PM", venue: "The Grand Ballroom" },
+            { name: "Wedding", date: "2026-12-18", time: "7:00 PM", venue: "The Leela Palace" }
+        ],
+        galleryTitle: "Our moments",
+        closing: "Your presence will make our celebration complete",
+        rsvp: "Sharma Family · +91 98765 43210", signOff: "With love, Sharma & Mehta families",
+        watermark: true
+    });
+    saveDraft();
+});
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+    if (!confirm("Clear the form for a new client?")) return;
+    localStorage.removeItem(DRAFT_KEY);
+    couplePhoto = null; gallery = []; music = null;
+    document.getElementById("music-name").textContent = "No song chosen. The video will be silent (you can add music later in Facebook/Instagram).";
+    fill({ events: [] });
+    drawPhotos();
+});
+
+/* ---------- Modals ---------- */
+
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => b.closest(".modal").classList.remove("open")));
+
+function validate(data) {
+    if (!data.groom || !data.bride) {
+        alert("Please enter the groom's and bride's names.");
+        return false;
+    }
+    return true;
+}
+
+/* ---------- Preview ---------- */
+
+const previewFrame = document.getElementById("preview-frame");
+
+document.getElementById("preview-btn").addEventListener("click", () => {
+    const data = collect();
+    if (!validate(data)) return;
+    data.couplePhoto = couplePhoto;
+    data.gallery = gallery;
+
+    document.getElementById("preview-modal").classList.add("open");
+    const send = () => previewFrame.contentWindow.postMessage({ type: "invite-data", data }, "*");
+
+    window.onmessage = (e) => { if (e.data && e.data.type === "preview-ready") send(); };
+    if (previewFrame.dataset.loaded) send();
+    else { previewFrame.src = "/template.html?preview=1"; previewFrame.dataset.loaded = "1"; }
+});
+
+/* ---------- Create video ---------- */
+
+document.getElementById("create-btn").addEventListener("click", async () => {
+    const data = collect();
+    if (!validate(data)) return;
+
+    const modal = document.getElementById("render-modal");
+    const bar = document.getElementById("bar");
+    const text = document.getElementById("progress-text");
+    const errorBox = document.getElementById("render-error");
+    document.getElementById("render-title").textContent = "Creating video…";
+    document.getElementById("progress-area").hidden = false;
+    document.getElementById("result").hidden = true;
+    errorBox.hidden = true;
+    bar.style.width = "0%";
+    text.textContent = "Uploading photos and music…";
+    modal.classList.add("open");
+
+    const createBtn = document.getElementById("create-btn");
+    createBtn.disabled = true;
+
+    try {
+        const response = await fetch("/api/render", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ data, couplePhoto, gallery, music: music ? music.dataUrl : null })
+        });
+        const { id, error } = await response.json();
+        if (error) throw new Error(error);
+
+        while (true) {
+            await new Promise((r) => setTimeout(r, 1200));
+            const status = await (await fetch("/api/status/" + id)).json();
+            if (status.state === "error") throw new Error(status.error);
+            const pct = Math.round((status.progress || 0) * 100);
+            bar.style.width = pct + "%";
+            text.textContent = status.state === "queued" ? `Waiting in line (${status.queued})…`
+                : status.state === "encoding" ? "Finishing the video…" : `Drawing frames… ${pct}%`;
+
+            if (status.state === "done") {
+                document.getElementById("render-title").textContent = "Your video is ready 🎉";
+                document.getElementById("progress-area").hidden = true;
+                document.getElementById("result").hidden = false;
+                document.getElementById("result-video").src = status.file + "?t=" + Date.now();
+                const link = document.getElementById("download-link");
+                link.href = status.file + "?download=1";
+                break;
+            }
+        }
+    } catch (error) {
+        errorBox.textContent = "Something went wrong: " + error.message;
+        errorBox.hidden = false;
+    } finally {
+        createBtn.disabled = false;
+    }
+});
+
+document.getElementById("open-folder").addEventListener("click", () => fetch("/api/open-output", { method: "POST" }));
+</script>
+</body>
+</html>

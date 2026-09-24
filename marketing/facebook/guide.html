@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libesole Facebook Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --pink: #e0337a; --saffron: #ff6b2c; --gold: #f7a928; --teal: #0e8a8a; --plum: #3b1248;
+        --ink: #2a1a24; --muted: #6d5b66; --line: rgba(42, 16, 48, 0.12); --bg: #fff8ef; --card: #ffffff;
+        --grad: linear-gradient(120deg, #e0337a, #ff6b2c 55%, #f7a928);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; line-height: 1.6; }
+    header { background: var(--grad); color: #fff; padding: 36px 16px 30px; text-align: center; }
+    header h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2.2rem, 7vw, 3.4rem); margin: 0; line-height: 1; }
+    header p { margin: 10px auto 0; max-width: 640px; opacity: 0.95; }
+    nav { position: sticky; top: 0; z-index: 10; display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px;
+          background: rgba(255, 248, 239, 0.95); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
+    nav a { flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line);
+            color: var(--plum); font-size: 0.85rem; font-weight: 700; text-decoration: none; }
+    nav a:hover { border-color: var(--pink); color: var(--pink); }
+    main { max-width: 980px; margin: 0 auto; padding: 24px 16px 80px; }
+    section { margin-top: 40px; scroll-margin-top: 70px; }
+    h2 { font-family: "Cormorant Garamond", serif; font-size: 2.1rem; color: var(--plum); margin: 0 0 6px; line-height: 1.1; }
+    h2 small { display: block; font-family: "DM Sans", sans-serif; font-size: 0.8rem; letter-spacing: 0.15em; color: var(--pink); font-weight: 700; }
+    h3 { margin: 22px 0 8px; font-size: 1.1rem; color: var(--plum); }
+    ol, ul { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 14px; box-shadow: 0 10px 30px rgba(90, 20, 60, 0.05); }
+    .note { background: #fff4d6; border-left: 4px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin-top: 14px; font-size: 0.95rem; }
+    .warn { background: #ffe8ef; border-left-color: var(--pink); }
+    code, .k { background: #f3ecf1; border-radius: 6px; padding: 2px 7px; font-size: 0.92em; }
+
+    .copy-box { position: relative; margin-top: 10px; }
+    .copy-box pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 0.95rem;
+                    background: #fbf7fa; border: 1px dashed rgba(224, 51, 122, 0.35); border-radius: 12px; padding: 14px 16px 14px; padding-right: 90px; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer;
+                background: var(--grad); color: #fff; font: 700 0.8rem "DM Sans", sans-serif; }
+    .copy-btn.done { background: #25d366; color: #0b3d1f; }
+    .label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-top: 14px; }
+
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-top: 14px; }
+    .post { background: #fff; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+    .post img { width: 100%; display: block; background: #eee; }
+    .post .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .post .day { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: var(--pink); }
+    .post h3 { margin: 0; }
+    .dl { display: inline-block; margin-top: 6px; font-weight: 700; color: var(--teal); text-decoration: none; font-size: 0.9rem; }
+    .wide { grid-column: 1 / -1; }
+    .ad-row { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 14px; }
+    @media (min-width: 760px) { .ad-row { grid-template-columns: 300px 1fr; } }
+    .thumbs { display: flex; gap: 8px; align-items: flex-start; }
+    .thumbs img { border-radius: 10px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .check li { list-style: none; margin-left: -22px; }
+    .check input { margin-right: 8px; transform: scale(1.2); accent-color: var(--pink); }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Libesole Facebook &amp; Meta Ads Kit</h1>
+    <p>Everything you need to launch your Facebook page and start getting clients. Click <b>Copy</b> on any text and paste it into Facebook.</p>
+</header>
+
+<nav>
+    <a href="#checklist">✅ Checklist</a>
+    <a href="#create">1 · Create page</a>
+    <a href="#details">2 · Page details</a>
+    <a href="#branding">3 · Photos</a>
+    <a href="#whatsapp">4 · WhatsApp</a>
+    <a href="#posts">5 · First 2 weeks</a>
+    <a href="#reels">6 · Reels</a>
+    <a href="#ads">7 · Meta Ads</a>
+    <a href="#grow">8 · Free growth</a>
+</nav>
+
+<main>
+
+<!-- ============================ CHECKLIST ============================ -->
+<section id="checklist">
+    <h2><small>YOUR LAUNCH PLAN</small>Checklist</h2>
+    <div class="card">
+        <ul class="check">
+            <li><label><input type="checkbox"> Create the Facebook page (Step 1)</label></li>
+            <li><label><input type="checkbox"> Add name, bio, contact details and WhatsApp button (Step 2)</label></li>
+            <li><label><input type="checkbox"> Upload profile picture and cover photo (Step 3)</label></li>
+            <li><label><input type="checkbox"> Set up WhatsApp Business with auto-replies (Step 4)</label></li>
+            <li><label><input type="checkbox"> Publish Post 1 and pin it; invite friends to like the page</label></li>
+            <li><label><input type="checkbox"> Post every 2 days for 2 weeks (Step 5) and share 3 Reels (Step 6)</label></li>
+            <li><label><input type="checkbox"> Decide your prices, then start Meta Ads at ₹300/day (Step 7)</label></li>
+            <li><label><input type="checkbox"> Send me your Facebook page link so I add it to the website</label></li>
+        </ul>
+    </div>
+    <div class="note"><b>Before running ads, decide your prices.</b> People who message from ads almost always ask "How much?" first. Have a simple answer ready, for example 3 packages (basic e-card, video invite, wedding website). Tell me your prices and I'll make a price-list image too.</div>
+</section>
+
+<!-- ============================ CREATE ============================ -->
+<section id="create">
+    <h2><small>STEP 1 · 5 MINUTES</small>Create the Facebook page</h2>
+    <div class="card">
+        <ol>
+            <li>On a computer, log in to your <b>personal Facebook account</b>. A page is always created from a personal profile; your personal name is <b>not</b> shown on the page.</li>
+            <li>Open <b><a href="https://www.facebook.com/pages/create" target="_blank" rel="noopener">facebook.com/pages/create</a></b>.</li>
+            <li><b>Page name:</b> copy it from Step 2 below.</li>
+            <li><b>Category:</b> type and select the categories from Step 2 (you can pick up to 3).</li>
+            <li><b>Bio:</b> copy it from Step 2.</li>
+            <li>Click <b>Create Page</b>.</li>
+            <li>On the next screens, Facebook asks for contact details, hours, photos and so on. Use Step 2 and Step 3. You can click <b>Skip</b> on anything and add it later from <b>Edit details</b>.</li>
+        </ol>
+    </div>
+</section>
+
+<!-- ============================ DETAILS ============================ -->
+<section id="details">
+    <h2><small>STEP 2 · COPY &amp; PASTE</small>Page details</h2>
+
+    <div class="label">Page name</div>
+    <div class="copy-box"><pre>Libesole – Digital Wedding Invitations</pre></div>
+
+    <div class="label">Categories (pick these 3)</div>
+    <div class="copy-box"><pre>Wedding Planning Service
+Graphic Designer
+Video Creator</pre></div>
+
+    <div class="label">Bio (short intro under the name)</div>
+    <div class="copy-box"><pre>Video invites, wedding websites &amp; e-cards in any Indian language 💌 WhatsApp 63982 52681</pre></div>
+
+    <div class="label">Username (Settings → Username)</div>
+    <div class="copy-box"><pre>libesole</pre></div>
+    <p style="font-size:.9rem;color:var(--muted)">If it's taken, try <code>libesoleinvites</code> or <code>libesole.official</code>.</p>
+
+    <div class="label">Website</div>
+    <div class="copy-box"><pre>https://invites.libesole.com</pre></div>
+
+    <div class="label">Email</div>
+    <div class="copy-box"><pre>libesoleofficial@gmail.com</pre></div>
+
+    <div class="label">Phone / WhatsApp</div>
+    <div class="copy-box"><pre>+91 6398252681</pre></div>
+
+    <div class="label">About / Details (longer description)</div>
+    <div class="copy-box"><pre>Libesole creates beautiful digital invitations for weddings and every celebration.
+
+🎬 Cinematic video invitations
+💻 Personal wedding websites with RSVP, venue maps, gallery and countdown
+💌 E-invite cards for Haldi, Mehendi, Sangeet, Wedding, Reception, birthdays and more
+
+✓ Fully customised to your story
+✓ English, Hindi and regional languages
+✓ Free preview before delivery
+✓ Delivered on WhatsApp, ready to share
+
+Message us on WhatsApp: +91 63982 52681
+See our designs: https://invites.libesole.com</pre></div>
+
+    <h3>Action button</h3>
+    <div class="card">
+        <ol>
+            <li>On your page, click <b>+ Add action button</b> (or <b>Edit</b> next to the existing button).</li>
+            <li>Choose <b>WhatsApp</b> (or <b>Send WhatsApp message</b>).</li>
+            <li>Enter <span class="k">+91 6398252681</span> and verify with the code sent to WhatsApp.</li>
+        </ol>
+        <p>Every visitor then gets a big green button that opens a chat with you.</p>
+    </div>
+</section>
+
+<!-- ============================ BRANDING ============================ -->
+<section id="branding">
+    <h2><small>STEP 3</small>Profile picture &amp; cover photo</h2>
+    <div class="grid">
+        <div class="post">
+            <img src="images/profile.png" alt="Profile picture">
+            <div class="body"><h3>Profile picture</h3><p style="margin:0;color:var(--muted)">1080 × 1080. Facebook crops it to a circle; the design already fits.</p>
+            <a class="dl" href="images/profile.png" download>⬇ Download profile.png</a></div>
+        </div>
+        <div class="post wide">
+            <img src="images/cover.png" alt="Cover photo">
+            <div class="body"><h3>Cover photo</h3><p style="margin:0;color:var(--muted)">1640 × 624. Upload it, then drag to position if Facebook asks. Use the same images on Instagram.</p>
+            <a class="dl" href="images/cover.png" download>⬇ Download cover.png</a></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================ WHATSAPP ============================ -->
+<section id="whatsapp">
+    <h2><small>STEP 4 · VERY IMPORTANT</small>WhatsApp Business &amp; auto-replies</h2>
+    <p>Almost every client from Facebook and ads will message you on WhatsApp. Reply fast. Use the free <b>WhatsApp Business</b> app so you can set automatic replies.</p>
+    <div class="card">
+        <ol>
+            <li>Install <b>WhatsApp Business</b> from the Play Store on the phone with <span class="k">6398252681</span>. It can move your existing chats over.</li>
+            <li>Business profile: name <b>Libesole</b>, category <b>Event Planning Service</b>, add the profile picture, website and email.</li>
+            <li><b>Settings → Business tools → Greeting message</b>: paste the greeting below.</li>
+            <li><b>Away message</b>: paste the away message and set it to "Outside business hours".</li>
+            <li><b>Quick replies</b>: save the replies below with shortcuts like <code>/price</code>.</li>
+            <li><b>Catalogue</b>: add your 3 services with photos (use the post images) and prices.</li>
+        </ol>
+    </div>
+
+    <div class="label">Greeting message</div>
+    <div class="copy-box"><pre>Hi! 🙏 Thank you for contacting Libesole 💌
+
+To help you quickly, please share:
+1️⃣ Event (Wedding / Haldi / Birthday…)
+2️⃣ Event date
+3️⃣ What you need: Video invite, Card or Wedding website
+4️⃣ Language
+
+See our designs: https://invites.libesole.com</pre></div>
+
+    <div class="label">Away message</div>
+    <div class="copy-box"><pre>Thank you for your message! 😊 We're away right now and will reply first thing tomorrow morning. Meanwhile, you can browse our designs at https://invites.libesole.com</pre></div>
+
+    <div class="label">Quick reply · /price</div>
+    <div class="copy-box"><pre>🎉 Launch offer prices:
+
+💻 Wedding Website Invitation: ₹2,999 (regular ₹7,999)
+🎬 Video Invitation: ₹1,999 (regular ₹4,999)
+
+Every order includes a free preview before delivery and changes to text, photos and music. Which one would you like? 😊</pre></div>
+
+    <div class="label">Quick reply · /details</div>
+    <div class="copy-box"><pre>Great! Please send:
+• Bride &amp; groom names (or host name)
+• Event names, dates, times and venues
+• 3–5 photos (optional)
+• Preferred language and a song (for video invites)
+We'll share a preview within [X] days. 💌</pre></div>
+
+    <div class="label">Quick reply · /thanks (after delivery)</div>
+    <div class="copy-box"><pre>Thank you for choosing Libesole! 🙏 We hope your guests love it. If you're happy, a short recommendation on our Facebook page would mean a lot: [your page link] ❤️</pre></div>
+
+    <div class="note">Also enable <b>Messenger auto-replies</b>: Facebook page → <b>Meta Business Suite → Inbox → Automations → Instant reply</b>. Paste the greeting message there too, and add: <i>"Chat faster on WhatsApp: wa.me/916398252681"</i>.</div>
+</section>
+
+<!-- ============================ POSTS ============================ -->
+<section id="posts">
+    <h2><small>STEP 5 · POST EVERY 2 DAYS</small>Your first 2 weeks of posts</h2>
+    <p>Post in the evening (7–9 PM works well for Indian audiences). After Post 1, click <b>⋯ → Pin post</b> so it stays at the top.</p>
+
+    <div class="grid" id="post-grid"></div>
+</section>
+
+<!-- ============================ REELS ============================ -->
+<section id="reels">
+    <h2><small>STEP 6 · REELS GET THE MOST REACH</small>Share your 3 sample videos as Reels</h2>
+    <div class="card">
+        <ol>
+            <li>On your phone, open the Facebook app → your page → <b>Reel</b>.</li>
+            <li>Upload one video from the website's <code>videos</code> folder (copy them to your phone).</li>
+            <li>Add a trending wedding song from Facebook's music library at low volume, or keep the original sound.</li>
+            <li>Paste the caption below and tick <b>Also share to Instagram</b> if your Instagram is linked.</li>
+        </ol>
+    </div>
+    <div class="label">Reel 1 · kunalriya.mp4</div>
+    <div class="copy-box"><pre>A royal beginning deserves a royal invitation 👑✨
+Your photos, your story, your song, made into a cinematic video invite your guests will watch again and again.
+
+💬 WhatsApp 63982 52681
+🌐 invites.libesole.com
+
+#VideoInvitation #WeddingInvitation #DigitalInvitation #IndianWedding #ShaadiSeason #Libesole</pre></div>
+    <div class="label">Reel 2 · arjuntara.mp4</div>
+    <div class="copy-box"><pre>Two hearts, one story 💞
+Turn your love story into a cinematic invitation, in English, Hindi or your own language.
+
+Free preview before delivery ✓
+💬 WhatsApp 63982 52681
+
+#SaveTheDate #WeddingVideo #EInvite #CoupleGoals #WeddingSeason #Libesole</pre></div>
+    <div class="label">Reel 3 · aaravmeera.mp4</div>
+    <div class="copy-box"><pre>The celebration begins with the invite 🪷
+Traditional, elegant and made just for you. Share it with every guest in one tap.
+
+💬 WhatsApp 63982 52681 · 🌐 invites.libesole.com
+
+#ShubhVivah #WeddingInvite #DigitalInvite #TraditionalWedding #Libesole</pre></div>
+</section>
+
+<!-- ============================ ADS ============================ -->
+<section id="ads">
+    <h2><small>STEP 7 · META ADS</small>Ads that bring WhatsApp chats</h2>
+    <p>The best ad type for you is <b>Click-to-WhatsApp</b>: people tap the ad and a WhatsApp chat with you opens, with no website or form in between. One ad runs on Facebook <b>and</b> Instagram.</p>
+
+    <h3>A. Set up the campaign (Meta Ads Manager)</h3>
+    <div class="card">
+        <ol>
+            <li>Go to <b><a href="https://adsmanager.facebook.com" target="_blank" rel="noopener">adsmanager.facebook.com</a></b> and select your Libesole page's ad account. Add a payment method (UPI or card).</li>
+            <li>Click <b>+ Create</b> → objective <b>Engagement</b> → <b>Continue</b>.</li>
+            <li>Campaign name: <span class="k">Libesole – WhatsApp – Test 1</span>.</li>
+            <li>Ad set → <b>Conversion location: Messaging apps → WhatsApp</b>. Pick your number <span class="k">+91 6398252681</span>.</li>
+            <li><b>Budget:</b> Daily <b>₹300</b>. Run for <b>7 days</b> as a test (about ₹2,100 total).</li>
+            <li><b>Audience</b> (see B below).</li>
+            <li><b>Placements:</b> keep <b>Advantage+ placements</b> ON (Facebook, Instagram, Stories, Reels).</li>
+            <li>Ad → <b>Single image or video</b>. Upload the square image, and for Stories/Reels choose the 9:16 version via <b>Edit → Customise by placement</b>.</li>
+            <li>Paste the <b>Primary text</b>, <b>Headline</b> and <b>Description</b> from C below. Call to action: <b>Send WhatsApp message</b>.</li>
+            <li><b>Message template:</b> choose "Get quotes" or create your own greeting (paste the WhatsApp greeting from Step 4) and add quick questions: <i>"I want a video invite"</i>, <i>"I want a wedding website"</i>, <i>"Show me prices"</i>.</li>
+            <li>Click <b>Publish</b>. Meta reviews the ad (usually within a few hours).</li>
+        </ol>
+    </div>
+
+    <h3>B. Who to target</h3>
+    <table>
+        <tr><th>Setting</th><th>Value</th></tr>
+        <tr><td>Location</td><td>Your city + 40 km to start (easier to serve and follow up). Later, add big cities: Delhi, Mumbai, Jaipur, Lucknow, Pune, Bengaluru, Hyderabad.</td></tr>
+        <tr><td>Age</td><td>22 – 45 (couples, siblings and parents plan invitations)</td></tr>
+        <tr><td>Language</td><td>Leave blank (all)</td></tr>
+        <tr><td>Audience</td><td>Advantage+ audience ON, with "audience suggestions": <i>Weddings, Engagement, Wedding planning, Bride, Indian weddings, Wedding photography</i>. If shown, also add the life event <i>Newly engaged (1 year)</i>.</td></tr>
+    </table>
+    <div class="note">Best timing: Indian wedding season (roughly <b>October to February</b>, plus April–May). Start ads about 1–2 months before big muhurat dates, since people order invites 4–8 weeks before the event.</div>
+
+    <h3>C. Ready-made ads (3 designs to test)</h3>
+    <p>Run all 3 in the same ad set. After 5–7 days, keep the one with the <b>lowest "cost per messaging conversation started"</b> and switch off the others.</p>
+
+    <div class="ad-row card">
+        <div class="thumbs"><img src="images/ad-a-square.png" width="170" alt=""><img src="images/ad-a-story.png" width="96" alt=""></div>
+        <div>
+            <h3 style="margin-top:0">Ad A · "Wedding in the family?"</h3>
+            <a class="dl" href="images/ad-a-square.png" download>⬇ Square (feed)</a> &nbsp; <a class="dl" href="images/ad-a-story.png" download>⬇ 9:16 (Stories/Reels)</a>
+            <div class="label">Primary text</div>
+            <div class="copy-box"><pre>Wedding in the family? 💍 Invite your guests in style!
+
+Get a beautiful digital invitation made just for you:
+🎬 Video invites with your photos &amp; music
+💻 Wedding websites with RSVP &amp; venue maps
+💌 E-cards for Haldi, Mehendi, Sangeet &amp; more
+
+✓ Any Indian language ✓ Free preview before delivery
+Tap below to chat on WhatsApp 👇</pre></div>
+            <div class="label">Headline</div>
+            <div class="copy-box"><pre>Get a free preview on WhatsApp</pre></div>
+            <div class="label">Description</div>
+            <div class="copy-box"><pre>Digital wedding invitations by Libesole</pre></div>
+        </div>
+    </div>
+
+    <div class="ad-row card">
+        <div class="thumbs"><img src="images/ad-b-portrait.png" width="170" alt=""><img src="images/ad-b-story.png" width="96" alt=""></div>
+        <div>
+            <h3 style="margin-top:0">Ad B · "Skip the printing"</h3>
+            <a class="dl" href="images/ad-b-portrait.png" download>⬇ 4:5 (feed)</a> &nbsp; <a class="dl" href="images/ad-b-story.png" download>⬇ 9:16 (Stories/Reels)</a>
+            <div class="label">Primary text</div>
+            <div class="copy-box"><pre>Skip the printing, courier and delays 🙌
+Send a stunning invitation to every guest in one tap on WhatsApp.
+
+Matching designs for Haldi, Mehendi, Sangeet, Wedding &amp; Reception, in English, Hindi or your language.
+
+Message us to see designs 👇</pre></div>
+            <div class="label">Headline</div>
+            <div class="copy-box"><pre>Digital invites for every function</pre></div>
+            <div class="label">Description</div>
+            <div class="copy-box"><pre>Chat with Libesole on WhatsApp</pre></div>
+        </div>
+    </div>
+
+    <div class="ad-row card">
+        <div class="thumbs"><img src="images/ad-c-square.png" width="170" alt=""></div>
+        <div>
+            <h3 style="margin-top:0">Ad C · "Every function"</h3>
+            <a class="dl" href="images/ad-c-square.png" download>⬇ Square (feed)</a>
+            <div class="label">Primary text</div>
+            <div class="copy-box"><pre>One designer for your whole wedding ✨
+Haldi 💛 Mehendi 💚 Sangeet 💙 Wedding ❤️
+
+Get matching invitations for every function, personalised with your names, dates, venues and language. Delivered on WhatsApp, ready to share.
+
+Tap to chat 👇</pre></div>
+            <div class="label">Headline</div>
+            <div class="copy-box"><pre>Matching invites for every function</pre></div>
+            <div class="label">Description</div>
+            <div class="copy-box"><pre>Libesole · Digital invitations</pre></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0">Ad D · Video (often the best performer)</h3>
+        <p>Create one more ad in the same ad set using the <b>kunalriya.mp4</b> video (vertical 9:16 works for Reels and Stories). Paste Ad A's primary text and use the headline <b>"Your story as a video invite"</b>.</p>
+    </div>
+
+    <h3>D. Reading your results</h3>
+    <table>
+        <tr><th>What you see</th><th>What to do</th></tr>
+        <tr><td>Cost per conversation under ₹40–60</td><td>Good. Keep it running; after a week, raise the budget by 20–30% every 3–4 days.</td></tr>
+        <tr><td>Cost per conversation above ₹100 after 3 days</td><td>Switch that ad off and try a different design or headline.</td></tr>
+        <tr><td>Many chats but few orders</td><td>The ads work; improve replies. Answer within 5 minutes, send 2–3 sample designs, share prices clearly and follow up the next day.</td></tr>
+        <tr><td>Few chats at all</td><td>Widen the location or age range, or try the video ad.</td></tr>
+    </table>
+    <div class="note warn"><b>Keep ads honest.</b> Don't use numbers such as "15,000+ happy customers" in ads unless they're true for Libesole. Meta can reject ads with misleading claims, and customers lose trust. Also avoid tiny text on images and "before/after" style claims.</div>
+    <div class="note">Track every client in your <b>Libesole Leads</b> Google Sheet: add a column <b>"Source"</b> (Facebook ad / Instagram / Website / Referral) so you know which channel brings paying customers.</div>
+</section>
+
+<!-- ============================ FREE GROWTH ============================ -->
+<section id="grow">
+    <h2><small>STEP 8 · ₹0 BUDGET</small>Free ways to get clients</h2>
+    <div class="card">
+        <ol>
+            <li><b>Invite all your Facebook friends</b> to like the page (page → <b>⋯ → Invite friends</b>), and share Post 1 on your personal profile and WhatsApp Status.</li>
+            <li><b>Join local wedding groups</b> on Facebook (search "<i>[your city] wedding</i>", "<i>wedding vendors [city]</i>"). Read each group's rules and share your work only where allowed. Helpful answers get more clients than spam.</li>
+            <li><b>Partner with other vendors</b>: photographers, mehendi artists, decorators and makeup artists meet couples every day. Offer them a referral commission or a free invite for their own family.</li>
+            <li><b>Show every finished invite</b> (with the client's permission). Real work is your best advertisement. Post it as a Reel and tag the couple.</li>
+            <li><b>Ask every happy client for a recommendation</b> on your Facebook page and a Google review. Send the /thanks quick reply.</li>
+            <li><b>Link Instagram</b>: page settings → <b>Linked accounts → Instagram</b>. Post the same content to both.</li>
+            <li><b>WhatsApp Status daily</b>: post one design or Reel every day; friends and relatives often forward it to families with upcoming weddings.</li>
+        </ol>
+    </div>
+    <div class="card">
+        <h3 style="margin-top:0">Your 15-minute daily routine</h3>
+        <ul>
+            <li>☀️ Morning: reply to every message from the night (within the first hour).</li>
+            <li>📱 Afternoon: post one design on WhatsApp Status and Instagram Stories.</li>
+            <li>🌙 Evening (7–9 PM): publish the day's Facebook post or Reel; reply to comments.</li>
+            <li>📊 Once a week: check the Leads sheet and Ads Manager; follow up with every "New" lead.</li>
+        </ul>
+    </div>
+</section>
+
+</main>
+
+<script>
+    /* ---------- Post plan (rendered into the grid) ---------- */
+    const TAGS = "#DigitalInvitation #WeddingInvitation #EInvite #IndianWedding #ShaadiSeason #Libesole";
+    const CTA = "💬 WhatsApp 63982 52681\n🌐 invites.libesole.com";
+
+    const posts = [
+        { day: "DAY 1 · PIN THIS POST", img: "post-01", title: "Introducing Libesole",
+          text: `Namaste! 🙏 Welcome to Libesole ✨\n\nWe create beautiful digital invitations for weddings and every celebration:\n🎬 Cinematic video invites\n💻 Personal wedding websites\n💌 E-invite cards for every function\n\nMade with your names, photos, music and language, and delivered on WhatsApp, ready to share with every guest.\n\n${CTA}\n\n${TAGS}` },
+        { day: "DAY 2", img: "post-02", title: "Our 3 services",
+          text: `Three beautiful ways to invite your loved ones 💌\n\n1️⃣ Video Invitations: your story, photos and favourite song in a cinematic video\n2️⃣ Wedding Websites: one link with your story, events, venue maps and RSVP\n3️⃣ E-Invite Cards: elegant cards for Haldi, Mehendi, Sangeet and more\n\nWhich one would you choose? Tell us in the comments 👇\n\n${CTA}\n\n${TAGS}` },
+        { day: "DAY 4", img: "post-03", title: "Template showcase",
+          text: `A colour for every celebration 🎨\n\nRoyal pink &amp; gold 👑 Sunshine Haldi 💛 Peacock Sangeet 💙 Midnight Reception 🌙\n\nPick a template you love and we'll personalise every detail for you. Comment your favourite: 1, 2, 3 or 4!\n\n${CTA}\n\n${TAGS} #WeddingTemplates`.replace(/&amp;/g, "&") },
+        { day: "DAY 6", img: "post-04", title: "How it works",
+          text: `Getting your invitation is this easy ✨\n\n1️⃣ Choose a design, or share your own idea\n2️⃣ Send your names, dates, venues and photos on WhatsApp\n3️⃣ Approve the free preview and share it with everyone!\n\nNo printing. No courier. No stress. 🙌\n\n${CTA}\n\n${TAGS}` },
+        { day: "DAY 8", img: "post-05", title: "Any language",
+          text: `Your invitation, in your language 🇮🇳\n\nआप सादर आमंत्रित हैं · You're Invited · आपणास सस्नेह निमंत्रण · அன்புடன் அழைக்கிறோம் · మీకు సాదర ఆహ్వానం · আপনাকে সাদর আমন্ত্রণ\n\nWe create invitations in English, Hindi and regional languages, or a mix, so every guest, from Dadi to your college friends, feels personally invited ❤️\n\n${CTA}\n\n${TAGS}` },
+        { day: "DAY 10", img: "post-06", title: "Wedding website",
+          text: `Why send just a card when you can send a whole wedding website? 💻💍\n\n✓ Your love story\n✓ All events: Haldi, Mehendi, Sangeet, Wedding\n✓ Photo gallery\n✓ RSVP and Google Maps to every venue\n✓ Live countdown to the big day ⏳\n\nAll in one beautiful link your guests can open on any phone.\n\n${CTA}\n\n${TAGS} #WeddingWebsite` },
+        { day: "DAY 12", img: "post-07", title: "Haldi invite",
+          text: `A splash of sunshine for your Haldi 💛🌼\n\nBright, happy invitations for the most colourful function of the wedding. Matching designs available for Mehendi, Sangeet and the Wedding too!\n\n${CTA}\n\n#HaldiCeremony #HaldiInvite ${TAGS}` },
+        { day: "DAY 13", img: "post-08", title: "Sangeet invite",
+          text: `Music, dance and magic 💃🕺✨\n\nMake your Sangeet night unforgettable from the very first invite. Peacock colours, elegant fonts and your names in style.\n\n${CTA}\n\n#Sangeet #SangeetNight ${TAGS}` },
+        { day: "DAY 14", img: "post-09", title: "Book now",
+          text: `Wedding season is here! 💍✨\n\nBook your invitation today:\n✓ Free preview before delivery\n✓ English, Hindi and regional languages\n✓ Delivered straight to WhatsApp\n\nMessage us now to see designs and prices 👇\n\n${CTA}\n\n${TAGS} #WeddingSeason` }
+    ];
+
+    const grid = document.getElementById("post-grid");
+
+    posts.forEach((post) => {
+        const card = document.createElement("div");
+        card.className = "post";
+        card.innerHTML = `
+            <img src="images/${post.img}.png" alt="${post.title}" loading="lazy">
+            <div class="body">
+                <span class="day">${post.day}</span>
+                <h3>${post.title}</h3>
+                <a class="dl" href="images/${post.img}.png" download>⬇ Download image</a>
+                <div class="copy-box"><pre></pre></div>
+            </div>`;
+        card.querySelector("pre").textContent = post.text;
+        grid.appendChild(card);
+    });
+
+    /* ---------- Copy buttons on every text box ---------- */
+    const copyText = (text) => {
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text);
+        }
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+        return Promise.resolve();
+    };
+
+    document.querySelectorAll(".copy-box").forEach((box) => {
+        const button = document.createElement("button");
+        button.className = "copy-btn";
+        button.type = "button";
+        button.textContent = "Copy";
+        button.addEventListener("click", () => {
+            copyText(box.querySelector("pre").textContent).then(() => {
+                button.textContent = "Copied ✓";
+                button.classList.add("done");
+                setTimeout(() => {
+                    button.textContent = "Copy";
+                    button.classList.remove("done");
+                }, 1600);
+            });
+        });
+        box.appendChild(button);
+    });
+</script>
+
+</body>
+</html>

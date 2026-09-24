@@ -1,0 +1,13 @@
+{
+  "name": "libesole-invite-maker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Create animated video invitations for Libesole clients",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.0.0"
+  }
+}

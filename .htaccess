@@ -4,6 +4,18 @@ RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Protect videos: they play on the website, but opening a video's
+# address directly in a browser tab (where it can be saved) or embedding
+# it on another website is blocked.
+RewriteCond %{REQUEST_URI} \.mp4$ [NC]
+RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [NC]
+RewriteRule ^ - [F]
+
+RewriteCond %{REQUEST_URI} \.mp4$ [NC]
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https?://([a-z0-9-]+\.)*libesole\.com/ [NC]
+RewriteRule ^ - [F]
+
 # Keep the setup notes private
 <Files "lead-sheet.gs">
     Require all denied
