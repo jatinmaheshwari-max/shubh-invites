@@ -13,6 +13,21 @@ const CONTACT_EMAIL = "jatinmaheshwari20@gmail.com";
  */
 const LEAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbzyr5qVCMiwmEIeKZd6wBn2KnTGTBijeSlHNTkAxSXDZrMfxnOsXCNMa6Uiu28OJtm1/exec";
 
+/*
+ * Meta Pixel events (the Pixel itself loads in index.html).
+ * Only non-personal details are sent: never names or phone numbers.
+ * Safe to call when the Pixel is blocked by an ad blocker.
+ */
+const trackMeta = (event, params = {}, custom = false) => {
+    try {
+        if (typeof window.fbq === "function") {
+            window.fbq(custom ? "trackCustom" : "track", event, params);
+        }
+    } catch (error) {
+        /* Never let tracking break the page */
+    }
+};
+
 const prefersReducedMotion =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -268,6 +283,20 @@ videos.forEach((video) => {
     video.addEventListener("contextmenu", (event) => event.preventDefault());
     video.addEventListener("dragstart", (event) => event.preventDefault());
 
+    /* Tell Meta once per video that someone watched a sample */
+    video.addEventListener("play", () => {
+        if (video.dataset.tracked) {
+            return;
+        }
+        video.dataset.tracked = "true";
+        const card = video.closest(".video-card");
+        const title = card ? card.querySelector("h3") : null;
+        trackMeta("ViewContent", {
+            content_type: "video",
+            content_name: title ? title.textContent.trim() : "Sample video"
+        });
+    });
+
     video.addEventListener("play", () => {
         videos.forEach((other) => {
             if (other !== video) {
@@ -318,10 +347,9 @@ const sendLead = (fields) => {
 
 document.querySelectorAll(".contact-float-btn").forEach((button) => {
     button.addEventListener("click", () => {
-        sendLead({
-            type: "click",
-            button: button.classList.contains("call-btn") ? "Call" : "WhatsApp"
-        });
+        const buttonName = button.classList.contains("call-btn") ? "Call" : "WhatsApp";
+        sendLead({ type: "click", button: buttonName });
+        trackMeta("Contact", { content_name: buttonName });
     });
 });
 
@@ -434,6 +462,12 @@ if (enquiryForm) {
             message: messageInput.value.trim()
         });
 
+        trackMeta("Lead", {
+            content_category: occasionSelect.value,
+            content_name: selectedServices().join(", ") || "Enquiry",
+            method: channel
+        });
+
     };
 
     enquiryForm.addEventListener("submit", (event) => {
@@ -506,6 +540,8 @@ if (enquiryForm) {
             }
 
             messageInput.value = `I love the "${link.dataset.template}" template.`;
+
+            trackMeta("TemplateSelected", { template: link.dataset.template }, true);
 
             enquiryForm.classList.remove("highlight");
             void enquiryForm.offsetWidth;
